@@ -1,13 +1,31 @@
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity, Text, View, Alert } from 'react-native';
 
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
+import { supabase } from '../lib/supabase';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleLogin = async () => {
+    setLoading(true);
+    const { error, data: {session}, } = await supabase.auth.signInWithPassword({ email, password });
+    setLoading(false);
+    if(session){
+        router.push('/test');
+    }
+    if (error) {
+      Alert.alert('Login failed', error.message);
+    } else {
+      // Redirect to home or tabs after successful login
+      router.replace('/test');
+    }
+  };
 
   return (
     <>
@@ -33,9 +51,15 @@ export default function LoginScreen() {
           onChangeText={setPassword}
           secureTextEntry
         />
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Log In</Text>
+        <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
+          <Text style={styles.buttonText}>{loading ? 'Logging in...' : 'Log In'}</Text>
         </TouchableOpacity>
+        <View style={styles.signupContainer}>
+          <Text style={styles.signupText}>Don't have an account?</Text>
+          <TouchableOpacity onPress={() => router.push('/signup')}>
+            <Text style={styles.signupLink}> Sign up</Text>
+          </TouchableOpacity>
+        </View>
       </ThemedView>
     </>
   );
@@ -80,5 +104,20 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 18,
+  },
+  signupContainer: {
+    flexDirection: 'row',
+    marginTop: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  signupText: {
+    color: '#0a7ea4',
+    fontSize: 15,
+  },
+  signupLink: {
+    color: '#1e90ff',
+    fontWeight: 'bold',
+    fontSize: 15,
   },
 });
