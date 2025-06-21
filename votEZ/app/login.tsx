@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { Stack, Link } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, Text } from 'react-native';
 
@@ -36,6 +36,11 @@ export default function LoginScreen() {
         <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>Log In</Text>
         </TouchableOpacity>
+        <Link href="/(tabs)" asChild>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Go to Home (Test)</Text>
+          </TouchableOpacity>
+        </Link>
       </ThemedView>
     </>
   );
