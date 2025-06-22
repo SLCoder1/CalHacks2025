@@ -29,6 +29,10 @@ export default function CandidatesTab() {
   // Load unique states from the JSON for governor dropdown only
   const [states, setStates] = useState<{ label: string; value: string }[]>([]);
 
+  // Returns the full candidate data object for a given candidate name
+  const getCandidateByName = (name: string) =>
+    candidateOptions.find((c) => c.label === name);
+
   useEffect(() => {
     // Get unique states from the JSON
     const uniqueStates = Array.from(
@@ -44,7 +48,7 @@ export default function CandidatesTab() {
   useEffect(() => {
     if (compareMode && compareSelection.length === 2) {
       setShowComparison(true);
-      setCompareMode(false);
+      //setCompareMode(false);
     } else if (compareSelection.length < 2) {
       setShowComparison(false);
     }
@@ -213,6 +217,92 @@ export default function CandidatesTab() {
     );
   }
 
+  // Comparison view
+  console.log(compareSelection);
+  console.log(compareMode);
+  if (compareMode && compareSelection.length === 2) {
+    const [cand1, cand2] = compareSelection.map(getCandidateByName);
+    return (
+      <KeyboardAvoidingView
+        style={{ flex: 1, backgroundColor: '#f8fbff' }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <View style={styles.container}>
+          <View style={styles.topButtonsRow}>
+            <TouchableOpacity style={styles.arrowButton} onPress={() => {
+              setCompareMode(false);
+              setCompareSelection([]);
+            }}>
+              <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+            <Text style={[styles.title, { flex: 1, textAlign: 'center' }]}>Compare Candidates</Text>
+            <View style={{ width: 40 }} />
+          </View>
+          <View style={styles.comparisonRow}>
+            {compareSelection.map((selectedName, idx) => {
+              const cand = candidateOptions.find(c => c.label === selectedName)?.fullData;
+
+              // Parse description for THIS candidate only
+              let descriptionSections: { title?: string; content: string }[] = [];
+              if (cand?.Description && cand.Description.includes('**')) {
+                const parts = cand.Description.split('**');
+                if (parts[0].trim()) {
+                  descriptionSections.push({ content: parts[0].trim() });
+                }
+                for (let i = 1; i < parts.length; i += 2) {
+                  const title = parts[i]?.replace(/:$/, '').trim();
+                  const content = parts[i + 1]?.trim();
+                  if (title && content) {
+                    descriptionSections.push({ title, content });
+                  } else if (title && !content) {
+                    descriptionSections.push({ title, content: '' });
+                  }
+                }
+              } else if (cand?.Description) {
+                descriptionSections.push({ content: cand.Description.trim() });
+              }
+
+              return (
+                <View style={styles.comparisonCol} key={cand?.Candidate || idx}>
+                  <Text style={[styles.detailName, { textAlign: 'center' }]}>{cand?.Candidate}</Text>
+                  {cand?.Description && cand.Description.trim() !== '' ? (
+                    cand.Description.includes('**') && descriptionSections.length > 0 ? (
+                      descriptionSections.map((section, i) => (
+                        <View key={i} style={styles.detailSection}>
+                          {section.title ? (
+                            <Text style={[styles.detailSectionTitle, { fontSize: 15, textAlign: 'left' }]}>{section.title}</Text>
+                          ) : null}
+                          <Text style={[styles.detailSectionText, { textAlign: 'left' }]}>{section.content}</Text>
+                        </View>
+                      ))
+                    ) : (
+                      <Text style={[styles.detailSectionText, { textAlign: 'left' }]}>{cand.Description}</Text>
+                    )
+                  ) : (
+                    <Text style={[styles.detailSectionText, { textAlign: 'left' }]}>No description available.</Text>
+                  )}
+                  {cand?.Agenda ? (
+                    <View style={styles.detailSection}>
+                      <Text style={styles.detailSectionTitle}>Agenda</Text>
+                      <Text style={styles.detailSectionText}>{cand.Agenda}</Text>
+                    </View>
+                  ) : null}
+                  {cand?.AgendaDetail ? (
+                    <View style={styles.detailSection}>
+                      <Text style={styles.detailSectionTitle}>Details</Text>
+                      <Text style={styles.detailSectionText}>{cand.AgendaDetail}</Text>
+                    </View>
+                  ) : null}
+                  {/* Add more sections as needed */}
+                </View>
+              );
+            })}
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+    );
+  }
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: CARD_BG }}
@@ -304,8 +394,8 @@ export default function CandidatesTab() {
                 alignItems: 'center',
                 marginBottom: 8,
                 height: 40,
+                paddingLeft: 16,
                 position: 'relative',
-                paddingLeft: 16, // <-- Add padding to match other back buttons
               }}
             >
               <TouchableOpacity
@@ -317,19 +407,56 @@ export default function CandidatesTab() {
               <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginRight: 40 }}>
                 <Text style={styles.title}>Candidates</Text>
               </View>
+              {/* Compare button in top right corner */}
+              <TouchableOpacity
+                style={[styles.arrowButton, { backgroundColor: '#0a7ea4', marginRight: 16 }]}
+                onPress={() => {
+                  setCompareMode(true);
+                  setCompareSelection([]);
+                }}
+              >
+                <Ionicons name="git-compare-outline" size={22} color="#fff" />
+              </TouchableOpacity>
             </View>
             <ScrollView style={{ width: '100%' }} contentContainerStyle={styles.cardsContainer}>
               {candidateOptions.map((c) => (
                 <TouchableOpacity
                   key={c.value}
                   style={styles.card}
-                  onPress={() => setSelectedCandidate(c)}
+                  onPress={() => {
+                    if (compareMode) {
+                      // Only allow up to 2 selections, do not exit compareMode automatically
+                      if (
+                        compareSelection.includes(c.label) ||
+                        compareSelection.length < 2
+                      ) {
+                        toggleCompare(c.label);
+                      }
+                    } else {
+                      setSelectedCandidate(c);
+                    }
+                  }}
                   activeOpacity={0.8}
                 >
                   <Text style={styles.cardName}>{c.label}</Text>
+                  {/* Show checkmark if in compare mode and selected */}
+                  {compareMode && (
+                    <Ionicons
+                      name={compareSelection.includes(c.label) ? "checkbox" : "square-outline"}
+                      size={22}
+                      color="#0a7ea4"
+                      style={{ position: 'absolute', right: 16, top: 16 }}
+                    />
+                  )}
                 </TouchableOpacity>
               ))}
             </ScrollView>
+            {/* Show compare instructions if in compare mode */}
+            {compareMode && (
+              <Text style={{ color: '#0a7ea4', textAlign: 'center', marginTop: 8 }}>
+                Select two candidates to compare.
+              </Text>
+            )}
           </>
         )}
       </View>
@@ -424,20 +551,42 @@ const styles = StyleSheet.create({
     width: '100%',
     gap: 16,
   },
-  comparisonCard: {
+  comparisonCol: {
+    flex: 1,
     backgroundColor: '#fff',
-    borderRadius: 10,
+    borderRadius: 12,
     padding: 18,
-    width: 150,
-    minHeight: 120,
-    marginHorizontal: 4,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: SECONDARY_COLOR,
+    marginHorizontal: 8,
+    alignItems: 'flex-start',
     shadowColor: '#000',
     shadowOpacity: 0.08,
     shadowRadius: 4,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: '#7bb6e8',
+    minHeight: 380,
+    maxWidth: 760, // Make the comparison box narrower
+    width: '90%',  // Ensures it doesn't stretch too much
+    alignSelf: 'center',
+  },
+  comparisonName: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    color: PRIMARY_COLOR,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  comparisonSectionTitle: {
+    fontWeight: 'bold',
+    color: '#0a7ea4',
+    fontSize: 16,
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  comparisonSectionText: {
+    color: '#0a7ea4',
+    fontSize: 15,
+    textAlign: 'center',
   },
   doneButton: {
     backgroundColor: SECONDARY_COLOR,
@@ -480,6 +629,7 @@ const styles = StyleSheet.create({
   detailSectionText: {
     color: '#0a7ea4',
     fontSize: 15,
-    textAlign: 'center',
+    textAlign: 'left',
   },
 });
+
