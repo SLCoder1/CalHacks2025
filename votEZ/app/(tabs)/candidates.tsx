@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity, ScrollView } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 const states = [
   { label: 'California', value: 'CA' },
@@ -115,7 +117,15 @@ const candidates = {
   },
 };
 
+// Standardized colors
+const PRIMARY_COLOR = '#0a7ea4'; // Used for text and some buttons
+const SECONDARY_COLOR = '#7bb6e8'; // Used for main buttons
+const DANGER_COLOR = '#e67c73'; // Used for restart
+const GRAY_COLOR = '#b3b3b3'; // Used for back
+const CARD_BG = '#f8fbff'; // Used for card backgrounds
+
 export default function CandidatesTab() {
+  const router = useRouter();
   const [officeOpen, setOfficeOpen] = useState(false);
   const [office, setOffice] = useState<string | null>(null);
 
@@ -224,17 +234,19 @@ export default function CandidatesTab() {
   if (selectedCandidate) {
     return (
       <KeyboardAvoidingView
-        style={{ flex: 1, backgroundColor: '#f8fbff' }}
+        style={{ flex: 1, backgroundColor: CARD_BG }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={styles.container}>
           <View style={styles.topButtonsRow}>
-            <TouchableOpacity style={styles.backButton} onPress={handleBackFromDetail}>
-              <Text style={styles.buttonText}>Back</Text>
+            <TouchableOpacity style={styles.arrowButton} onPress={handleBackFromDetail}>
+              <Ionicons name="arrow-back" size={24} color="#fff" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.restartButton} onPress={handleRestart}>
-              <Text style={styles.buttonText}>Restart</Text>
-            </TouchableOpacity>
+            {office && (
+              <TouchableOpacity style={styles.restartButton} onPress={handleRestart}>
+                <Text style={styles.buttonText}>Restart</Text>
+              </TouchableOpacity>
+            )}
           </View>
           <View style={styles.comparisonContainer}>
             <Text style={styles.comparisonTitle}>{selectedCandidate.label}</Text>
@@ -253,17 +265,19 @@ export default function CandidatesTab() {
   if (showComparison && comparedCandidates.length === 2) {
     return (
       <KeyboardAvoidingView
-        style={{ flex: 1, backgroundColor: '#f8fbff' }}
+        style={{ flex: 1, backgroundColor: CARD_BG }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={styles.container}>
           <View style={styles.topButtonsRow}>
-            <TouchableOpacity style={styles.backButton} onPress={handleBackFromComparison}>
-              <Text style={styles.buttonText}>Back</Text>
+            <TouchableOpacity style={styles.arrowButton} onPress={handleBackFromComparison}>
+              <Ionicons name="arrow-back" size={24} color="#fff" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.restartButton} onPress={handleRestart}>
-              <Text style={styles.buttonText}>Restart</Text>
-            </TouchableOpacity>
+            {office && (
+              <TouchableOpacity style={styles.restartButton} onPress={handleRestart}>
+                <Text style={styles.buttonText}>Restart</Text>
+              </TouchableOpacity>
+            )}
           </View>
           <View style={styles.comparisonContainer}>
             <Text style={styles.comparisonTitle}>Comparison</Text>
@@ -283,25 +297,38 @@ export default function CandidatesTab() {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: '#f8fbff' }}
+      style={{ flex: 1, backgroundColor: CARD_BG }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View style={styles.container}>
         <View style={styles.topButtonsRow}>
-          {showCards && (
-            <TouchableOpacity style={styles.backButton} onPress={handleBackFromCandidates}>
-              <Text style={styles.buttonText}>Back</Text>
-            </TouchableOpacity>
-          )}
+          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+            {/* Back arrow for office selection, goes to home */}
+            {!office && (
+              <TouchableOpacity style={styles.arrowButton} onPress={() => router.replace('/')}>
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+              </TouchableOpacity>
+            )}
+            {/* Back arrow for state selection */}
+            {office === 'governor' && !state && (
+              <TouchableOpacity style={styles.arrowButton} onPress={() => setOffice(null)}>
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+              </TouchableOpacity>
+            )}
+            {/* Back arrow for candidate/compare views */}
+            {showCards && (
+              <TouchableOpacity style={styles.arrowButton} onPress={handleBackFromCandidates}>
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+              </TouchableOpacity>
+            )}
+          </View>
           {showCards && !compareMode && !showComparison && (
-            <TouchableOpacity style={styles.compareButton} onPress={() => setCompareMode(true)}>
+            <TouchableOpacity style={styles.iconButton} onPress={() => setCompareMode(true)}>
               <Text style={styles.buttonText}>Compare</Text>
             </TouchableOpacity>
           )}
-          <TouchableOpacity style={styles.restartButton} onPress={handleRestart}>
-            <Text style={styles.buttonText}>Restart</Text>
-          </TouchableOpacity>
         </View>
+
         {!office && (
           <>
             <Text style={styles.title}>Find a Candidate</Text>
@@ -350,6 +377,7 @@ export default function CandidatesTab() {
                   key={c.value}
                   style={styles.card}
                   onPress={() => setSelectedCandidate(c)}
+                  activeOpacity={0.8}
                 >
                   <Text style={styles.cardName}>{c.label}</Text>
                   <Text style={styles.cardAgenda}>{c.agenda}</Text>
@@ -375,6 +403,7 @@ export default function CandidatesTab() {
                     ]}
                     onPress={() => toggleCompare(c.value)}
                     disabled={compareSelection.length === 2 && !checked}
+                    activeOpacity={0.8}
                   >
                     <View style={styles.cardRow}>
                       <Text style={styles.cardName}>{c.label}</Text>
@@ -393,9 +422,9 @@ export default function CandidatesTab() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', paddingTop: 56, backgroundColor: '#f8fbff' },
-  title: { fontSize: 22, marginBottom: 12, color: '#0a7ea4', fontWeight: 'bold' },
-  instructions: { fontSize: 16, color: '#0a7ea4', marginBottom: 24, textAlign: 'center' },
+  container: { flex: 1, alignItems: 'center', paddingTop: 56, backgroundColor: CARD_BG },
+  title: { fontSize: 22, marginBottom: 12, color: PRIMARY_COLOR, fontWeight: 'bold' },
+  instructions: { fontSize: 16, color: PRIMARY_COLOR, marginBottom: 24, textAlign: 'center' },
   topButtonsRow: {
     flexDirection: 'row',
     width: '100%',
@@ -406,32 +435,35 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   compareButton: {
-    backgroundColor: '#7bb6e8',
-    paddingVertical: 10,
-    paddingHorizontal: 22,
+    backgroundColor: SECONDARY_COLOR,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
     borderRadius: 8,
     marginRight: 8,
   },
-  backButton: {
+  arrowButton: {
     backgroundColor: '#b3b3b3',
-    paddingVertical: 10,
-    paddingHorizontal: 22,
-    borderRadius: 8,
+    padding: 10,
+    borderRadius: 50,
     marginRight: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 40,
+    height: 40,
   },
   restartButton: {
-    backgroundColor: '#e67c73',
-    paddingVertical: 10,
-    paddingHorizontal: 22,
+    backgroundColor: '#7bb6e8',
+    paddingVertical: 16,
+    paddingHorizontal: 32,
     borderRadius: 8,
   },
-  buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 18 },
   cardsContainer: {
     alignItems: 'center',
     paddingBottom: 32,
   },
   card: {
-    backgroundColor: '#e6f2fb',
+    backgroundColor: '#fff',
     borderRadius: 10,
     padding: 18,
     marginVertical: 10,
@@ -440,11 +472,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 4,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: SECONDARY_COLOR,
   },
   cardChecked: {
     borderWidth: 2,
-    borderColor: '#0a7ea4',
-    backgroundColor: '#d0eafd',
+    borderColor: PRIMARY_COLOR,
+    backgroundColor: SECONDARY_COLOR,
   },
   cardDisabled: {
     opacity: 0.5,
@@ -454,9 +488,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  cardName: { fontWeight: 'bold', fontSize: 18, color: '#0a7ea4', marginBottom: 8 },
-  cardAgenda: { color: '#0a7ea4', fontSize: 15 },
-  checkmark: { fontSize: 20, color: '#0a7ea4', marginLeft: 8 },
+  cardName: { fontWeight: 'bold', fontSize: 18, color: PRIMARY_COLOR, marginBottom: 8 },
+  cardAgenda: { color: PRIMARY_COLOR, fontSize: 15 },
+  checkmark: { fontSize: 20, color: PRIMARY_COLOR, marginLeft: 8 },
   comparisonContainer: {
     marginTop: 24,
     alignItems: 'center',
@@ -464,7 +498,7 @@ const styles = StyleSheet.create({
   },
   comparisonTitle: {
     fontWeight: 'bold',
-    color: '#0a7ea4',
+    color: PRIMARY_COLOR,
     fontSize: 18,
     marginBottom: 12,
   },
@@ -475,17 +509,19 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   comparisonCard: {
-    backgroundColor: '#e6f2fb',
+    backgroundColor: '#fff',
     borderRadius: 10,
     padding: 18,
     width: 150,
     minHeight: 120,
     marginHorizontal: 4,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: SECONDARY_COLOR,
   },
   doneButton: {
-    backgroundColor: '#7bb6e8',
-    paddingVertical: 10,
+    backgroundColor: SECONDARY_COLOR,
+    paddingVertical: 12,
     paddingHorizontal: 32,
     borderRadius: 8,
     marginTop: 18,

@@ -27,7 +27,7 @@ export default function LoginScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Login' }} />
+      <Stack.Screen options={{ headerShown: false }} />
       <ThemedView style={styles.container} lightColor="#f8fbff" darkColor="#1a2633">
         <ThemedText type="title" style={styles.title}>
           Welcome to votEZ
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   },
   title: {
     marginBottom: 32,
-    color: '#0a7ea4',
+    color: '#1e90ff',
   },
   input: {
     width: '100%',
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginBottom: 16,
     backgroundColor: '#fff',
-    color: '#0a7ea4',
+    color: '#1e90ff',
     fontSize: 16,
   },
   button: {

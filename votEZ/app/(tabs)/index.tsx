@@ -16,6 +16,7 @@ interface Message {
 }
 
 export default function HomeScreen() {
+  const router = useRouter();
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -129,20 +130,45 @@ export default function HomeScreen() {
             source={require('@/assets/images/votEZ logo.png')}
             style={styles.logo}
           />
-          <View style={styles.header}>
-            <View style={styles.headerLeft} />
-            <ThemedText type="title" style={styles.title}>votEZ</ThemedText>
-            <View style={styles.headerRight}>
-            </View>
+
+          {/* Introduction */}
+          <View style={{ marginBottom: 32, paddingHorizontal: 24 }}>
+            <Text style={{ fontSize: 16, color: '#0a7ea4', textAlign: 'center', fontWeight: '500' }}>
+              We help you understand elections with simple words, clear pictures, and voice guidance.
+              {"\n"}No reading needed — just tap, listen, and learn.
+            </Text>
           </View>
 
-          <TouchableOpacity style={styles.button}>
-            <ThemedText style={styles.buttonText}>Candidates</ThemedText>
+          {/* Candidates Button */}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => router.push('/(tabs)/candidates')}
+          >
+            <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 18 }}>Candidates</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.button}>
             <ThemedText style={styles.buttonText}>Simplified Propositions</ThemedText>
           </TouchableOpacity>
+
+          {/* Bias Disclaimer below "Simplified Propositions" */}
+          <View
+            style={{
+              color: 'white',
+              backgroundColor: 'white',
+              fontSize: 14,
+              textAlign: 'center',
+              marginTop: 8,
+              padding: 10,
+              borderRadius: 6,
+              width: '90%',
+            }}
+          >
+            <Text style={{ color: '#0a7ea4', fontSize: 14, textAlign: 'center' }}>
+              <Text style={{ fontWeight: 'bold' }}>Bias Disclaimer:{"\n"}</Text>
+              We strive to present information as neutrally as possible. However, some bias may remain. Please use multiple sources to make your decisions.
+            </Text>
+          </View>
         </View>
       </ScrollView>
       <View style={styles.footerContainer}>
@@ -151,9 +177,9 @@ export default function HomeScreen() {
       </View>
 
       {/* Floating Chat Button */}
-      <TouchableOpacity style={styles.floatingChatButton} onPress={toggleChat}>
+      {/* <TouchableOpacity style={styles.floatingChatButton} onPress={toggleChat}>
         <ThemedText style={styles.floatingChatText}>?</ThemedText>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       {/* Chat Overlay */}
       {isChatOpen && (
@@ -269,10 +295,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    height: 140,
-    width: 200,
+    height: 160,
+    width: 300,
     resizeMode: 'contain',
-    marginBottom: 24,
+    marginBottom: 0,
     marginTop: 60,
   },
   header: {
@@ -296,17 +322,14 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
   button: {
-    width: '100%',
-    padding: 15,
-    borderWidth: 2,
-    borderColor: '#007AFF',
-    borderRadius: 12,
-    alignItems: 'center',
-    marginBottom: 16,
-    backgroundColor: 'transparent',
+    backgroundColor: '#7bb6e8',
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 8,
+    marginTop: 24,
   },
   buttonText: {
-    color: '#007AFF',
+    color: '#fff',
     fontSize: 18,
     fontWeight: '600',
   },
