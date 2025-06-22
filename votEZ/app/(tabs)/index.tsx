@@ -1,122 +1,33 @@
 import { Image } from 'expo-image';
-import { StyleSheet, TouchableOpacity, View, ScrollView, TextInput, Text, Animated, Dimensions, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, ScrollView, Text } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useState, useRef, useEffect } from 'react';
-import { Ionicons } from '@expo/vector-icons';
+import { useEffect } from 'react';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-
-const { width, height } = Dimensions.get('window');
-
-interface Message {
-  id: string;
-  text: string;
-  isUser: boolean;
-  timestamp: Date;
-}
+import { usePageContext } from '@/components/PageContext';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: 'Hello! I\'m your voting assistant. How can I help you today?',
-      isUser: false,
-      timestamp: new Date(),
-    },
-  ]);
-  const [inputText, setInputText] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(0)).current;
+  const { setCurrentPageContent } = usePageContext();
 
   useEffect(() => {
-    if (isChatOpen) {
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(slideAnim, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    } else {
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(slideAnim, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }
-  }, [isChatOpen]);
+    setCurrentPageContent({
+      title: 'Home',
+      type: 'home',
+      content: `Welcome to votEZ - Your Voting Assistant
 
-  const sendMessage = async () => {
-    if (!inputText.trim() || isLoading) return;
+We help you understand elections with simple words, clear pictures, and voice guidance.
+No reading needed — just tap, listen, and learn.
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: inputText.trim(),
-      isUser: true,
-      timestamp: new Date(),
-    };
+Available Features:
+- Candidates: View and compare political candidates
+- Simplified Propositions: Understand ballot measures in simple terms
 
-    setMessages(prev => [...prev, userMessage]);
-    setInputText('');
-    setIsLoading(true);
+Bias Disclaimer: We strive to present information as neutrally as possible. However, some bias may remain. Please use multiple sources to make your decisions.`,
+    });
 
-    try {
-      const response = await fetch('http://localhost:3001/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: userMessage.text,
-        }),
-      });
-
-      const data = await response.json();
-      
-      if (data.error) {
-        throw new Error(data.error);
-      }
-      
-      const botMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: data.response,
-        isUser: false,
-        timestamp: new Date(),
-      };
-
-      setMessages(prev => [...prev, botMessage]);
-    } catch (error) {
-      console.error('Error sending message:', error);
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: 'Sorry, I\'m having trouble connecting right now. Please try again later.',
-        isUser: false,
-        timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const toggleChat = () => {
-    setIsChatOpen(!isChatOpen);
-  };
+    return () => setCurrentPageContent(null);
+  }, [setCurrentPageContent]);
 
   return (
     <ThemedView
@@ -175,115 +86,6 @@ export default function HomeScreen() {
         <ThemedText style={styles.disclaimer}>
         </ThemedText>
       </View>
-
-      {/* Floating Chat Button */}
-      {/* <TouchableOpacity style={styles.floatingChatButton} onPress={toggleChat}>
-        <ThemedText style={styles.floatingChatText}>?</ThemedText>
-      </TouchableOpacity> */}
-
-      {/* Chat Overlay */}
-      {isChatOpen && (
-        <Animated.View
-          style={[
-            styles.overlay,
-            {
-              opacity: fadeAnim,
-              backgroundColor: 'rgba(0, 0, 0, 0.6)',
-            },
-          ]}
-        >
-          <TouchableOpacity
-            style={styles.overlayTouchable}
-            onPress={toggleChat}
-            activeOpacity={1}
-          />
-        </Animated.View>
-      )}
-
-      {/* Chat Window */}
-      <Animated.View
-        style={[
-          styles.chatWindow,
-          {
-            transform: [
-              {
-                translateY: slideAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [height, 0],
-                }),
-              },
-            ],
-            opacity: fadeAnim,
-            backgroundColor: '#ffffff',
-          },
-        ]}
-      >
-        <KeyboardAvoidingView
-          style={styles.chatContainer}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
-          {/* Chat Header */}
-          <View style={styles.chatHeader}>
-            <Text style={styles.chatTitle}>Voting Assistant</Text>
-            <TouchableOpacity onPress={toggleChat} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color="#1e293b" />
-            </TouchableOpacity>
-          </View>
-
-          {/* Messages */}
-          <ScrollView style={styles.messagesContainer} showsVerticalScrollIndicator={false}>
-            {messages.map((message) => (
-              <View
-                key={message.id}
-                style={[
-                  styles.messageBubble,
-                  message.isUser ? styles.userMessage : styles.botMessage,
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.messageText,
-                    message.isUser ? styles.userMessageText : styles.botMessageText,
-                  ]}
-                >
-                  {message.text}
-                </Text>
-              </View>
-            ))}
-            {isLoading && (
-              <View style={[styles.messageBubble, styles.botMessage]}>
-                <Text style={[styles.messageText, styles.botMessageText]}>
-                  Typing...
-                </Text>
-              </View>
-            )}
-          </ScrollView>
-
-          {/* Input */}
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.textInput}
-              value={inputText}
-              onChangeText={setInputText}
-              placeholder="Type your message..."
-              placeholderTextColor="#64748b"
-              multiline
-              maxLength={500}
-            />
-            <TouchableOpacity
-              style={[styles.sendButton, !inputText.trim() && styles.sendButtonDisabled]}
-              onPress={sendMessage}
-              disabled={!inputText.trim() || isLoading}
-            >
-              <Ionicons
-                name="send"
-                size={20}
-                color={inputText.trim() ? '#ffffff' : '#64748b'}
-              />
-            </TouchableOpacity>
-          </View>
-        </KeyboardAvoidingView>
-      </Animated.View>
     </ThemedView>
   );
 }
@@ -340,113 +142,5 @@ const styles = StyleSheet.create({
   disclaimer: {
     textAlign: 'center',
     color: 'grey',
-  },
-  floatingChatButton: {
-    position: 'absolute',
-    bottom: 50,
-    right: 20,
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#007AFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  floatingChatText: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'flex-end',
-  },
-  overlayTouchable: {
-    flex: 1,
-    backgroundColor: 'transparent',
-  },
-  chatWindow: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    width: '100%',
-    height: '70%',
-  },
-  chatContainer: {
-    flex: 1,
-    padding: 16,
-  },
-  chatHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  chatTitle: {
-    color: '#1e293b',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  closeButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#f3f4f6',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  messagesContainer: {
-    flex: 1,
-    maxHeight: '75%',
-  },
-  messageBubble: {
-    padding: 12,
-    borderRadius: 12,
-    marginBottom: 8,
-  },
-  userMessage: {
-    backgroundColor: '#f3f4f6',
-  },
-  botMessage: {
-    backgroundColor: '#007AFF',
-  },
-  messageText: {
-    color: '#1e293b',
-    fontSize: 16,
-  },
-  userMessageText: {
-    color: '#1e293b',
-  },
-  botMessageText: {
-    color: '#FFFFFF',
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  textInput: {
-    flex: 1,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#f3f4f6',
-    borderRadius: 12,
-  },
-  sendButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#007AFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 8,
-  },
-  sendButtonDisabled: {
-    backgroundColor: '#f3f4f6',
   },
 });
