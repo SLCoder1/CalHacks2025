@@ -264,7 +264,14 @@ export default function CandidatesTab() {
 
               return (
                 <View style={styles.comparisonCol} key={cand?.Candidate || idx}>
-                  <Text style={[styles.detailName, { textAlign: 'center' }]}>{cand?.Candidate}</Text>
+                  <Text
+                    style={[
+                      styles.detailName,
+                      { textAlign: 'center', alignSelf: 'center', width: '100%' }
+                    ]}
+                  >
+                    {cand?.Candidate}
+                  </Text>
                   {cand?.Description && cand.Description.trim() !== '' ? (
                     cand.Description.includes('**') && descriptionSections.length > 0 ? (
                       descriptionSections.map((section, i) => (
