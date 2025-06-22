@@ -4,6 +4,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import governors from '../../data/Governers - Sheet1.json';
+import { usePageContext } from '@/components/PageContext';
 
 const PRIMARY_COLOR = '#0a7ea4'; // Used for text and some buttons
 const SECONDARY_COLOR = '#7bb6e8'; // Used for main buttons
@@ -13,6 +14,7 @@ const CARD_BG = '#f8fbff'; // Used for card backgrounds
 
 export default function CandidatesTab() {
   const router = useRouter();
+  const { setCurrentPageContent } = usePageContext();
   const [officeOpen, setOfficeOpen] = useState(false);
   const [office, setOffice] = useState<string | null>(null);
 
@@ -43,6 +45,53 @@ export default function CandidatesTab() {
       value: state,
     })));
   }, []);
+
+  // Update page content when state, office, or selected candidate changes
+  useEffect(() => {
+    let content = 'Candidates Page\n\n';
+    
+    if (office) {
+      content += `Selected Office: ${office}\n`;
+    }
+    
+    if (state) {
+      content += `Selected State: ${state}\n`;
+    }
+    
+    if (selectedCandidate) {
+      const c = selectedCandidate.fullData;
+      content += `\nCurrently Viewing: ${c.Candidate}\n`;
+      if (c.Description) {
+        content += `Description: ${c.Description}\n`;
+      }
+      if (c.Agenda) {
+        content += `Agenda: ${c.Agenda}\n`;
+      }
+    } else if (candidateOptions.length > 0) {
+      content += `\nAvailable Candidates:\n`;
+      candidateOptions.forEach(candidate => {
+        content += `- ${candidate.label}\n`;
+      });
+    }
+    
+    if (compareSelection.length > 0) {
+      content += `\nComparing: ${compareSelection.join(' vs ')}\n`;
+    }
+
+    setCurrentPageContent({
+      title: 'Candidates',
+      type: 'candidates',
+      content: content,
+      metadata: {
+        office: office,
+        state: state,
+        selectedCandidate: selectedCandidate?.fullData?.Candidate,
+        compareSelection: compareSelection,
+      }
+    });
+
+    return () => setCurrentPageContent(null);
+  }, [office, state, selectedCandidate, compareSelection, setCurrentPageContent]);
 
   // Effect to show comparison automatically when two are selected
   useEffect(() => {
