@@ -147,17 +147,17 @@ export default function HomeScreen() {
             <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 18 }}>Candidates</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity 
+            style={styles.button}
+            onPress={() => router.push('/propositions')}
+          >
             <ThemedText style={styles.buttonText}>Simplified Propositions</ThemedText>
           </TouchableOpacity>
 
           {/* Bias Disclaimer below "Simplified Propositions" */}
           <View
             style={{
-              color: 'white',
               backgroundColor: 'white',
-              fontSize: 14,
-              textAlign: 'center',
               marginTop: 8,
               padding: 10,
               borderRadius: 6,
