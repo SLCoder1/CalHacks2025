@@ -3,121 +3,8 @@ import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacit
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import governors from '../../data/Governers - Sheet1.json';
 
-const states = [
-  { label: 'California', value: 'CA' },
-  { label: 'Texas', value: 'TX' },
-  { label: 'New York', value: 'NY' },
-  { label: 'Florida', value: 'FL' },
-  { label: 'Illinois', value: 'IL' },
-  // ...add more states as needed
-];
-
-const candidates = {
-  president: [
-    {
-      label: 'Alice Johnson',
-      value: 'alice',
-      agenda: 'Universal healthcare, climate action, education reform.',
-      agendaDetail: 'Alice Johnson supports a single-payer healthcare system, aggressive carbon reduction targets, and increased federal funding for public schools and universities.',
-    },
-    {
-      label: 'Bob Smith',
-      value: 'bob',
-      agenda: 'Tax cuts, infrastructure, national security.',
-      agendaDetail: 'Bob Smith proposes broad tax reductions for individuals and businesses, a $1 trillion infrastructure plan, and increased defense spending for border and cyber security.',
-    },
-  ],
-  'vice-president': [
-    {
-      label: 'Carol Lee',
-      value: 'carol',
-      agenda: 'Affordable housing, tech innovation, public safety.',
-      agendaDetail: 'Carol Lee advocates for federal grants for affordable housing, investment in tech startups, and police reform for safer communities.',
-    },
-    {
-      label: 'David Kim',
-      value: 'david',
-      agenda: 'Small business support, education, healthcare.',
-      agendaDetail: 'David Kim supports tax credits for small businesses, STEM education initiatives, and expanding Medicaid coverage.',
-    },
-  ],
-  governor: {
-    CA: [
-      {
-        label: 'Eve Martinez',
-        value: 'eve',
-        agenda: 'Green energy, wildfire prevention, affordable housing.',
-        agendaDetail: 'Eve Martinez plans to expand solar and wind energy, fund wildfire prevention programs, and increase affordable housing construction.',
-      },
-      {
-        label: 'Frank Wu',
-        value: 'frank',
-        agenda: 'Water management, education, tech jobs.',
-        agendaDetail: 'Frank Wu proposes new water conservation projects, increased teacher salaries, and incentives for tech companies to hire locally.',
-      },
-    ],
-    TX: [
-      {
-        label: 'Grace Lin',
-        value: 'grace',
-        agenda: 'Border security, oil & gas, education.',
-        agendaDetail: 'Grace Lin supports increased border patrol funding, deregulation for oil & gas, and school voucher programs.',
-      },
-      {
-        label: 'Henry Ford',
-        value: 'henry',
-        agenda: 'Property tax reform, healthcare, infrastructure.',
-        agendaDetail: 'Henry Ford proposes capping property taxes, expanding rural healthcare, and repairing state highways.',
-      },
-    ],
-    NY: [
-      {
-        label: 'Ivy Chen',
-        value: 'ivy',
-        agenda: 'Public transit, affordable housing, climate action.',
-        agendaDetail: 'Ivy Chen wants to modernize subways, fund affordable housing, and implement a state-wide carbon tax.',
-      },
-      {
-        label: 'Jack Lee',
-        value: 'jack',
-        agenda: 'Crime reduction, business growth, education.',
-        agendaDetail: 'Jack Lee supports community policing, tax incentives for businesses, and charter school expansion.',
-      },
-    ],
-    FL: [
-      {
-        label: 'Karen White',
-        value: 'karen',
-        agenda: 'Hurricane preparedness, tourism, healthcare.',
-        agendaDetail: 'Karen White will increase hurricane relief funds, promote tourism, and expand Medicaid.',
-      },
-      {
-        label: 'Leo Brown',
-        value: 'leo',
-        agenda: 'Education, environment, public safety.',
-        agendaDetail: 'Leo Brown supports teacher pay raises, Everglades restoration, and police training programs.',
-      },
-    ],
-    IL: [
-      {
-        label: 'Mona Patel',
-        value: 'mona',
-        agenda: 'Gun safety, healthcare, jobs.',
-        agendaDetail: 'Mona Patel supports universal background checks, Medicaid expansion, and job training programs.',
-      },
-      {
-        label: 'Nate Green',
-        value: 'nate',
-        agenda: 'Tax reform, education, infrastructure.',
-        agendaDetail: 'Nate Green proposes simplifying the tax code, increasing school funding, and repairing bridges and roads.',
-      },
-    ],
-    // ...other states
-  },
-};
-
-// Standardized colors
 const PRIMARY_COLOR = '#0a7ea4'; // Used for text and some buttons
 const SECONDARY_COLOR = '#7bb6e8'; // Used for main buttons
 const DANGER_COLOR = '#e67c73'; // Used for restart
@@ -137,7 +24,21 @@ export default function CandidatesTab() {
   const [showComparison, setShowComparison] = useState(false);
 
   // For individual candidate detail view
-  const [selectedCandidate, setSelectedCandidate] = useState<null | { label: string; value: string; agenda?: string; agendaDetail?: string }>(null);
+  const [selectedCandidate, setSelectedCandidate] = useState<any>(null);
+
+  // Load unique states from the JSON for governor dropdown only
+  const [states, setStates] = useState<{ label: string; value: string }[]>([]);
+
+  useEffect(() => {
+    // Get unique states from the JSON
+    const uniqueStates = Array.from(
+      new Set(governors.map((row: any) => row.State && row.State.trim()).filter(Boolean))
+    );
+    setStates(uniqueStates.map((state: string) => ({
+      label: state,
+      value: state,
+    })));
+  }, []);
 
   // Effect to show comparison automatically when two are selected
   useEffect(() => {
@@ -205,12 +106,18 @@ export default function CandidatesTab() {
     setSelectedCandidate(null);
   };
 
-  // Candidate options
-  let candidateOptions: { label: string; value: string; agenda?: string; agendaDetail?: string }[] = [];
-  if (office === 'governor' && state && candidates.governor[state]) {
-    candidateOptions = candidates.governor[state];
-  } else if (office && office !== 'governor' && candidates[office]) {
-    candidateOptions = candidates[office];
+  // Candidate options logic
+  let candidateOptions: { label: string; value: string; fullData?: any }[] = [];
+  if (office === 'governor' && state) {
+    // Filter governors.json for selected state and sort by name
+    candidateOptions = governors
+      .filter((row: any) => row.State && row.State.trim() === state)
+      .sort((a: any, b: any) => (a.Candidate || '').localeCompare(b.Candidate || ''))
+      .map((row: any) => ({
+        label: row.Candidate,
+        value: row.Candidate,
+        fullData: row, // Pass all data for detail page
+      }));
   }
 
   // Show candidate cards if office is selected and (if governor) state is selected
@@ -230,65 +137,76 @@ export default function CandidatesTab() {
   // Get selected candidates for comparison
   const comparedCandidates = candidateOptions.filter((c) => compareSelection.includes(c.value));
 
-  // --- INDIVIDUAL CANDIDATE DETAIL VIEW ---
-  if (selectedCandidate) {
-    return (
-      <KeyboardAvoidingView
-        style={{ flex: 1, backgroundColor: CARD_BG }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <View style={styles.container}>
-          <View style={styles.topButtonsRow}>
-            <TouchableOpacity style={styles.arrowButton} onPress={handleBackFromDetail}>
-              <Ionicons name="arrow-back" size={24} color="#fff" />
-            </TouchableOpacity>
-            {office && (
-              <TouchableOpacity style={styles.restartButton} onPress={handleRestart}>
-                <Text style={styles.buttonText}>Restart</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-          <View style={styles.comparisonContainer}>
-            <Text style={styles.comparisonTitle}>{selectedCandidate.label}</Text>
-            <View style={styles.comparisonRow}>
-              <View style={styles.comparisonCard}>
-                <Text style={styles.cardAgenda}>{selectedCandidate.agendaDetail || selectedCandidate.agenda}</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-      </KeyboardAvoidingView>
-    );
-  }
+  // Candidate detail view (centered, split by section)
+  if (selectedCandidate && selectedCandidate.fullData) {
+    const c = selectedCandidate.fullData;
 
-  // --- COMPARISON VIEW ---
-  if (showComparison && comparedCandidates.length === 2) {
+    // Parse description into sections with titles and content
+    function parseDescriptionSections(description: string) {
+      // This regex matches **Section Title:** followed by content (including newlines), until the next ** or end of string
+      const regex = /\*\*(.*?)\*\*([\s\S]*?)(?=\*\*|$)/g;
+      const sections: { title: string; content: string }[] = [];
+      let match;
+      while ((match = regex.exec(description)) !== null) {
+        const title = match[1].replace(':', '').trim();
+        const content = match[2].replace(/^\s*[:\-]?\s*/, '').trim();
+        if (title || content) {
+          sections.push({ title, content });
+        }
+      }
+      return sections;
+    }
+
+    // Usage in your component:
+    const descriptionSections = c.Description ? parseDescriptionSections(c.Description) : [];
+
     return (
       <KeyboardAvoidingView
-        style={{ flex: 1, backgroundColor: CARD_BG }}
+        style={{ flex: 1, backgroundColor: '#f8fbff' }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={styles.container}>
           <View style={styles.topButtonsRow}>
-            <TouchableOpacity style={styles.arrowButton} onPress={handleBackFromComparison}>
-              <Ionicons name="arrow-back" size={24} color="#fff" />
-            </TouchableOpacity>
-            {office && (
-              <TouchableOpacity style={styles.restartButton} onPress={handleRestart}>
-                <Text style={styles.buttonText}>Restart</Text>
+            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+              <TouchableOpacity style={styles.arrowButton} onPress={() => setSelectedCandidate(null)}>
+                <Ionicons name="arrow-back" size={24} color="#fff" />
               </TouchableOpacity>
-            )}
-          </View>
-          <View style={styles.comparisonContainer}>
-            <Text style={styles.comparisonTitle}>Comparison</Text>
-            <View style={styles.comparisonRow}>
-              {comparedCandidates.map((c) => (
-                <View key={c.value} style={styles.comparisonCard}>
-                  <Text style={styles.cardName}>{c.label}</Text>
-                  <Text style={styles.cardAgenda}>{c.agendaDetail || c.agenda}</Text>
-                </View>
-              ))}
             </View>
+          </View>
+          <View style={styles.detailContainer}>
+            <Text style={styles.detailName}>{c.Candidate}</Text>
+            <View style={styles.detailSection}>
+              <Text style={styles.detailSectionTitle}></Text>
+              {c.Description && c.Description.trim() !== '' ? (
+                c.Description.includes('**') ? (
+                  descriptionSections.length > 0 ? (
+                    descriptionSections.map((section, idx) => (
+                      <View key={idx} style={{ marginTop: idx === 0 ? 0 : 12 }}>
+                        {section.title ? (
+                          <Text style={[styles.detailSectionTitle, { fontSize: 15, textAlign: 'left' }]}>{section.title}</Text>
+                        ) : null}
+                        <Text style={[styles.detailSectionText, { textAlign: 'left' }]}>{section.content}</Text>
+                      </View>
+                    ))
+                  ) : null
+                ) : (
+                  <Text style={[styles.detailSectionText, { textAlign: 'left' }]}>{c.Description}</Text>
+                )
+              ) : null}
+            </View>
+            {c.Agenda ? (
+              <View style={styles.detailSection}>
+                <Text style={styles.detailSectionTitle}>Agenda</Text>
+                <Text style={styles.detailSectionText}>{c.Agenda}</Text>
+              </View>
+            ) : null}
+            {c.AgendaDetail ? (
+              <View style={styles.detailSection}>
+                <Text style={styles.detailSectionTitle}>Details</Text>
+                <Text style={styles.detailSectionText}>{c.AgendaDetail}</Text>
+              </View>
+            ) : null}
+            {/* Add more sections as needed */}
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -301,37 +219,24 @@ export default function CandidatesTab() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View style={styles.container}>
-        <View style={styles.topButtonsRow}>
-          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-            {/* Back arrow for office selection, goes to home */}
-            {!office && (
-              <TouchableOpacity style={styles.arrowButton} onPress={() => router.replace('/')}>
-                <Ionicons name="arrow-back" size={24} color="#fff" />
-              </TouchableOpacity>
-            )}
-            {/* Back arrow for state selection */}
-            {office === 'governor' && !state && (
-              <TouchableOpacity style={styles.arrowButton} onPress={() => setOffice(null)}>
-                <Ionicons name="arrow-back" size={24} color="#fff" />
-              </TouchableOpacity>
-            )}
-            {/* Back arrow for candidate/compare views */}
-            {showCards && (
-              <TouchableOpacity style={styles.arrowButton} onPress={handleBackFromCandidates}>
-                <Ionicons name="arrow-back" size={24} color="#fff" />
-              </TouchableOpacity>
-            )}
-          </View>
-          {showCards && !compareMode && !showComparison && (
-            <TouchableOpacity style={styles.iconButton} onPress={() => setCompareMode(true)}>
-              <Text style={styles.buttonText}>Compare</Text>
+        {/* Back button to home page */}
+        {!office && (
+          <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', marginBottom: 8, height: 40, paddingLeft: 16 }}>
+            <TouchableOpacity
+              style={[styles.arrowButton, { position: 'relative', left: 0, top: 0 }]}
+              onPress={() => router.replace('/')}
+            >
+              <Ionicons name="arrow-back" size={24} color="#fff" />
             </TouchableOpacity>
-          )}
-        </View>
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginRight: 40 }}>
+              <Text style={styles.title}>Find a Candidate</Text>
+            </View>
+          </View>
+        )}
 
+        {/* Office dropdown */}
         {!office && (
           <>
-            <Text style={styles.title}>Find a Candidate</Text>
             <Text style={styles.instructions}>Select the office you want to explore.</Text>
             <DropDownPicker
               open={officeOpen}
@@ -342,7 +247,7 @@ export default function CandidatesTab() {
                 { label: 'Governor', value: 'governor' },
               ]}
               setOpen={setOfficeOpen}
-              setValue={handleOfficeChange}
+              setValue={setOffice}
               placeholder="Select office"
               containerStyle={{ width: 260, marginBottom: 16 }}
               zIndex={3000}
@@ -350,16 +255,37 @@ export default function CandidatesTab() {
           </>
         )}
 
+        {/* State dropdown for governor */}
         {office === 'governor' && !state && (
           <>
-            <Text style={styles.title}>Governor Race</Text>
+            <View
+              style={{
+                width: '100%',
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: 8,
+                height: 40,
+                position: 'relative',
+                paddingLeft: 16,
+              }}
+            >
+              <TouchableOpacity
+                style={[styles.arrowButton, { position: 'relative', left: 0, top: 0 }]}
+                onPress={() => setOffice(null)}
+              >
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+              </TouchableOpacity>
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginRight: 40 }}>
+                <Text style={styles.title}>Governor Race</Text>
+              </View>
+            </View>
             <Text style={styles.instructions}>Select the state for the governor race.</Text>
             <DropDownPicker
               open={stateOpen}
               value={state}
               items={states}
               setOpen={setStateOpen}
-              setValue={handleStateChange}
+              setValue={setState}
               placeholder="Select state"
               searchable={true}
               containerStyle={{ width: 260, marginBottom: 16 }}
@@ -368,9 +294,30 @@ export default function CandidatesTab() {
           </>
         )}
 
-        {showCards && !compareMode && !showComparison && (
+        {/* Candidate cards for selected state */}
+        {office === 'governor' && state && (
           <>
-            <Text style={styles.title}>Candidates</Text>
+            <View
+              style={{
+                width: '100%',
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: 8,
+                height: 40,
+                position: 'relative',
+                paddingLeft: 16, // <-- Add padding to match other back buttons
+              }}
+            >
+              <TouchableOpacity
+                style={[styles.arrowButton, { position: 'relative', left: 0, top: 0 }]}
+                onPress={() => setState(null)}
+              >
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+              </TouchableOpacity>
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginRight: 40 }}>
+                <Text style={styles.title}>Candidates</Text>
+              </View>
+            </View>
             <ScrollView style={{ width: '100%' }} contentContainerStyle={styles.cardsContainer}>
               {candidateOptions.map((c) => (
                 <TouchableOpacity
@@ -380,39 +327,8 @@ export default function CandidatesTab() {
                   activeOpacity={0.8}
                 >
                   <Text style={styles.cardName}>{c.label}</Text>
-                  <Text style={styles.cardAgenda}>{c.agenda}</Text>
                 </TouchableOpacity>
               ))}
-            </ScrollView>
-          </>
-        )}
-
-        {showCards && compareMode && !showComparison && (
-          <>
-            <Text style={styles.title}>Select 2 Candidates to Compare</Text>
-            <ScrollView style={{ width: '100%' }} contentContainerStyle={styles.cardsContainer}>
-              {candidateOptions.map((c) => {
-                const checked = compareSelection.includes(c.value);
-                return (
-                  <TouchableOpacity
-                    key={c.value}
-                    style={[
-                      styles.card,
-                      checked && styles.cardChecked,
-                      compareSelection.length === 2 && !checked && styles.cardDisabled,
-                    ]}
-                    onPress={() => toggleCompare(c.value)}
-                    disabled={compareSelection.length === 2 && !checked}
-                    activeOpacity={0.8}
-                  >
-                    <View style={styles.cardRow}>
-                      <Text style={styles.cardName}>{c.label}</Text>
-                      {checked && <Text style={styles.checkmark}>✔️</Text>}
-                    </View>
-                    <Text style={styles.cardAgenda}>{c.agenda}</Text>
-                  </TouchableOpacity>
-                );
-              })}
             </ScrollView>
           </>
         )}
@@ -518,6 +434,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: SECONDARY_COLOR,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
   doneButton: {
     backgroundColor: SECONDARY_COLOR,
@@ -525,5 +445,41 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 8,
     marginTop: 18,
+  },
+  detailContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 24,
+    marginTop: 32,
+    alignSelf: 'center',
+    width: '90%',
+    maxWidth: 400,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  detailName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#0a7ea4',
+    marginBottom: 18,
+    textAlign: 'center',
+  },
+  detailSection: {
+    width: '100%',
+    marginBottom: 18,
+  },
+  detailSectionTitle: {
+    fontWeight: 'bold',
+    color: '#0a7ea4',
+    fontSize: 16,
+    marginBottom: 4,
+  },
+  detailSectionText: {
+    color: '#0a7ea4',
+    fontSize: 15,
+    textAlign: 'center',
   },
 });
