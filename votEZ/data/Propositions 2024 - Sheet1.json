@@ -1,0 +1,792 @@
+[
+ {
+   "State": "Alabama",
+   "Proposition": "Amendment 1",
+   "Description": "Exempt local laws or local constitutional amendments from the budget isolation resolution process"
+ },
+ {
+   "State": "Alabama",
+   "Proposition": "Amendment 1",
+   "Description": "Authorize the Franklin County Board of Education to manage, sell, or lease lands and natural resources within the Franklin County School System located in Walker and Fayette Counties"
+ },
+ {
+   "State": "Alaska",
+   "Proposition": "Ballot Measure 1",
+   "Description": "Increase the state's minimum wage to $15 per hour and require employers to provide earned paid sick leave for employees\n"
+ },
+ {
+   "State": "Alaska",
+   "Proposition": "Ballot Measure 2",
+   "Description": "Repeal the top-four ranked-choice voting (RCV) system that was adopted in 2020"
+ },
+ {
+   "State": "Arizona",
+   "Proposition": "Proposition 133",
+   "Description": "Require partisan primary elections for partisan offices and prohibit primary elections where all candidates, regardless of political party affiliation, run in the same primary election, such as top-two, top-four, and top-five primaries"
+ },
+ {
+   "State": "Arizona",
+   "Proposition": "Proposition 134",
+   "Description": "Create a signature distribution requirement for citizen-initiated ballot measures based on state legislative districts"
+ },
+ {
+   "State": "Arizona",
+   "Proposition": "Proposition 135",
+   "Description": "Allow the legislature to terminate a state of emergency or change the emergency powers granted to the governor during a state of emergency"
+ },
+ {
+   "State": "Arizona",
+   "Proposition": "Proposition 136",
+   "Description": "Provide for challenges to an initiative measure or constitutional amendment after the filing of the measure with the secretary of state"
+ },
+ {
+   "State": "Arizona",
+   "Proposition": "Proposition 137",
+   "Description": "End term limits for state supreme court justices and superior court judges, replacing them with terms of good behavior, unless decided otherwise by a judicial review commission, and would end retention elections at the end of the judicial term, providing for retention elections under certain circumstances"
+ },
+ {
+   "State": "Arizona",
+   "Proposition": "Proposition 138",
+   "Description": "Allow for tipped workers to be paid 25% less per hour than the minimum wage provided that the worker's total compensation was not less than the minimum wage plus $2"
+ },
+ {
+   "State": "Arizona",
+   "Proposition": "Proposition 139",
+   "Description": "Provide for a state constitutional right to abortion"
+ },
+ {
+   "State": "Arizona",
+   "Proposition": "Proposition 140",
+   "Description": "Require primaries in which candidates, regardless of partisan affiliation, appear on a single ballot and a certain number advance to the general election, and require general election candidates to receive a majority of votes"
+ },
+ {
+   "State": "Arizona",
+   "Proposition": "Proposition 311",
+   "Description": "Establish a $20 fee on every conviction for a criminal offense, which would go to pay a benefit of $250,000 to the family of a first responder who is killed in the line of duty"
+ },
+ {
+   "State": "Arizona",
+   "Proposition": "Proposition 312",
+   "Description": "Allow for property owners to apply for a property tax refund in certain circumstances, including in instances if the city or locality in which the property is located does not enforce laws regarding illegal camping, loitering, obstructing public thoroughfares, panhandling, public urination or defecation, public consumption of alcoholic beverages, and possession or use of illegal substances"
+ },
+ {
+   "State": "Arizona",
+   "Proposition": "Proposition 313",
+   "Description": "Require that anyone convicted of child sex trafficking must receive a sentence of life imprisonment"
+ },
+ {
+   "State": "Arizona",
+   "Proposition": "Proposition 314",
+   "Description": "Provide for several changes to criminal and immigration law, including allowing police to arrest noncitizens who enter Arizona from foreign countries at locations other than official ports"
+ },
+ {
+   "State": "Arizona",
+   "Proposition": "Proposition 315",
+   "Description": "Prohibit a proposed rule from becoming effective if that rule is estimated to increase regulatory costs by more than $500,000 within five years after implementation, until the legislature enacts legislation ratifying the proposed rule"
+ },
+ {
+   "State": "Arkansas",
+   "Proposition": "Issue 1",
+   "Description": "Allow state lottery proceeds to fund scholarships and grants for vocational-technical schools and technical institutes"
+ },
+ {
+   "State": "Arkansas",
+   "Proposition": "Issue 2",
+   "Description": "Repeal the authorization for a casino license in Pope County and require countywide voter approval for any new casino licenses"
+ },
+ {
+   "State": "California",
+   "Proposition": "Proposition 1",
+   "Description": "Change the Mental Health Services Act to Behavioral Health Services Act and issue bonds for veteran housing and housing for homeless persons"
+ },
+ {
+   "State": "California",
+   "Proposition": "Proposition 2",
+   "Description": "Issue $10 billion in bonds to fund construction and modernization of public education facilities"
+ },
+ {
+   "State": "California",
+   "Proposition": "Proposition 32",
+   "Description": "Increase the state's minimum wage to $18 per hour"
+ },
+ {
+   "State": "California",
+   "Proposition": "Proposition 33",
+   "Description": "Repeals Costa Hawkins Rental Housing Act"
+ },
+ {
+   "State": "California",
+   "Proposition": "Proposition 34",
+   "Description": "Requires health care providers to spend 98% of revenues from federal discount prescription drug program on direct patient care"
+ },
+ {
+   "State": "California",
+   "Proposition": "Proposition 35",
+   "Description": "Permanently authorizes a tax on managed care organizations to fund Medi-Cal programs"
+ },
+ {
+   "State": "California",
+   "Proposition": "Proposition 36",
+   "Description": "Increase penalties for certain drug crimes and theft convictions and allow a new class of crime to be called treatment-mandated felony"
+ },
+ {
+   "State": "California",
+   "Proposition": "Proposition 3",
+   "Description": "Repeal Proposition 8 and establish a right to marry"
+ },
+ {
+   "State": "California",
+   "Proposition": "Proposition 4",
+   "Description": "Issue $10 billion in bonds to fund state and local parks, environmental protection projects, water infrastructure projects, energy projects, and flood protection projects"
+ },
+ {
+   "State": "California",
+   "Proposition": "Proposition 5",
+   "Description": "Lower the vote threshold from two-thirds to 55% for local bond measures to fund housing projects and public infrastructure"
+ },
+ {
+   "State": "California",
+   "Proposition": "Proposition 6",
+   "Description": "Remove involuntary servitude as punishment for a crime from the state constitution"
+ },
+ {
+   "State": "Colorado",
+   "Proposition": "Amendment 79",
+   "Description": "Provide for a state constitutional right to abortion and repeal provision banning the use of public funds for abortions"
+ },
+ {
+   "State": "Colorado",
+   "Proposition": "Amendment 80",
+   "Description": "Provide that \"each K-12 child has the right to school choice\""
+ },
+ {
+   "State": "Colorado",
+   "Proposition": "Amendment G",
+   "Description": "Expands the property tax exemption for veterans with a disability to veterans with individual unemployability status"
+ },
+ {
+   "State": "Colorado",
+   "Proposition": "Amendment H",
+   "Description": "Creates an independent judicial discipline adjudicative board and create rules for the judicial discipline process"
+ },
+ {
+   "State": "Colorado",
+   "Proposition": "Amendment I",
+   "Description": "Remove the right to bail in cases of first-degree murder when the proof is evident or the presumption is great"
+ },
+ {
+   "State": "Colorado",
+   "Proposition": "Amendment J",
+   "Description": "Remove the provision of the state constitution that says \"Only a union of one man and one woman shall be valid or recognized as a marriage in this state\""
+ },
+ {
+   "State": "Colorado",
+   "Proposition": "Amendment K",
+   "Description": "Change deadlines for filing initiative and referendum petition signatures and judicial retention notice deadlines to remove one week in order to allow one extra week for the secretary of state to certify ballot order and content and election officials' deadline to transmit ballots"
+ },
+ {
+   "State": "Colorado",
+   "Proposition": "Proposition 127",
+   "Description": "Prohibit trophy hunting, defined as \"intentionally killing, wounding, pursuing, or entrapping a mountain lion, bobcat, or lynx; or discharging or releasing any deadly weapon at a mountain lion, bobcat, or lynx\""
+ },
+ {
+   "State": "Colorado",
+   "Proposition": "Proposition 128",
+   "Description": "Require that persons convicted of certain violent crimes serve more of their sentences before being eligible for parole"
+ },
+ {
+   "State": "Colorado",
+   "Proposition": "Proposition 129",
+   "Description": "Create the profession of veterinary professional associate (VPA) requiring a master's degree and registration with the state board of veterinary medicine"
+ },
+ {
+   "State": "Colorado",
+   "Proposition": "Proposition 130",
+   "Description": "Allocate state revenue to a new fund, called the Peace Officer Training and Support Fund, for law enforcement recruitment, retention, training, and death benefits"
+ },
+ {
+   "State": "Colorado",
+   "Proposition": "Proposition 131",
+   "Description": "Establish top-four primaries and ranked-choice voting (RCV) for federal and state offices in Colorado"
+ },
+ {
+   "State": "Colorado",
+   "Proposition": "Proposition JJ",
+   "Description": "Allow the state to retain tax revenue collected above $29 million annually from the tax on sports betting proceeds"
+ },
+ {
+   "State": "Colorado",
+   "Proposition": "Propostion KK",
+   "Description": "Levy a 6.5% excise tax on firearms and ammunition manufacturing and sales to be imposed on firearms dealers, manufacturers, and ammunition vendors and appropriating the revenue to the Firearms and Ammunition Excise Tax Cash Fund to be used to fund crime victim services programs, mental and behavioral health programs for children and veterans, and school security and safety programs."
+ },
+ {
+   "State": "Florida",
+   "Proposition": "Amendment 1",
+   "Description": "Change school board elections from nonpartisan to partisan beginning in 2026"
+ },
+ {
+   "State": "Florida",
+   "Proposition": "Amendment 2",
+   "Description": "Provide for a state constitutional right to hunt and fish"
+ },
+ {
+   "State": "Florida",
+   "Proposition": "Amendment 3",
+   "Description": "Legalize the recreational or personal use of marijuana"
+ },
+ {
+   "State": "Florida",
+   "Proposition": "Amendment 4",
+   "Description": "Provide for a state constitutional right to abortion before fetal viability"
+ },
+ {
+   "State": "Florida",
+   "Proposition": "Amendment 5",
+   "Description": "Provide for an annual inflation adjustment for the value of the homestead property tax exemption"
+ },
+ {
+   "State": "Florida",
+   "Proposition": "Amendment 6",
+   "Description": "Repeal a constitutional provision providing for public campaign financing for candidates who agree to spending limits"
+ },
+ {
+   "State": "Georgia ",
+   "Proposition": "Amendment 1",
+   "Description": "Provide for a local option homestead property tax exemption and allow a county, municipality, or school system to opt out of the exemption"
+ },
+ {
+   "State": "Georgia ",
+   "Proposition": "Amendment 2",
+   "Description": "Create the Georgia Tax Court with statewide jurisdiction as provided by law"
+ },
+ {
+   "State": "Georgia ",
+   "Proposition": "Referendum A",
+   "Description": "Increase the personal property tax exemption from $7,500 to $20,000"
+ },
+ {
+   "State": "Hawaii ",
+   "Proposition": "Judicial Appointments and Confirmations Amendment",
+   "Description": "Change the process for appointing and confirming district court judges to be the same as that used for supreme court justices and other higher court judges"
+ },
+ {
+   "State": "Hawaii ",
+   "Proposition": "Remove Legislature Authority to Limit Marriage to Opposite-Sex Couples Amendment",
+   "Description": "Remove provision of the constitution saying that \"the legislature shall have the power to reserve marriage to opposite-sex couples\""
+ },
+ {
+   "State": "Idaho",
+   "Proposition": "HJR 5",
+   "Description": "Prohibit the state and local governments from allowing noncitizens to vote"
+ },
+ {
+   "State": "Idaho",
+   "Proposition": "Proposition 1",
+   "Description": "Establish top-four primaries and ranked-choice voting (RCV) for federal, state, and certain local offices in Idaho"
+ },
+ {
+   "State": "Illinois",
+   "Proposition": "Assisted Reproductive Healthcare Advisory Question",
+   "Description": "Advise state officials on whether to provide for medically assisted reproductive treatments, including in vitro fertilization, to be covered by any health insurance plan in Illinois that provides full coverage to pregnancy benefits"
+ },
+ {
+   "State": "Illinois",
+   "Proposition": "Income Tax Advisory Question",
+   "Description": "Advise state officials on whether to amend the Illinois Constitution to create an additional 3% tax on income greater than $1 million for the purpose of dedicating funds to property tax relief"
+ },
+ {
+   "State": "Illinois",
+   "Proposition": "Penalties for Candidate Interference with Election Worker's Duties Advisory Question",
+   "Description": "Advise state officials on whether to establish civil penalties if a candidate interferes or attempts to interfere with an election worker's official duties"
+ },
+ {
+   "State": "Indiana",
+   "Proposition": "Remove Superintendent of Public Instruction from Gubernatorial Line of Succession Amendment",
+   "Description": "Remove the superintendent of public instruction from the gubernatorial line of succession"
+ },
+ {
+   "State": "Iowa",
+   "Proposition": "Amendment 1",
+   "Description": "Prohibit the state and local governments from allowing noncitizens to vote and allow 17-year-olds who will be 18 by the general election to vote in primary elections"
+ },
+ {
+   "State": "Iowa",
+   "Proposition": "Amendment 2",
+   "Description": "Provides that if the governor dies, resigns, or is removed from office, the lieutenant governor would assume the office of governor for the remainder of the term, thereby creating a vacancy in the office of lieutenant governor"
+ },
+ {
+   "State": "Kentucky",
+   "Proposition": "Constitutional Amendment 1",
+   "Description": "Prohibit the state and local governments from allowing noncitizens to vote"
+ },
+ {
+   "State": "Kentucky",
+   "Proposition": "Constitutional Amendment 2",
+   "Description": "Allow the state to provide funding for non-public education"
+ },
+ {
+   "State": "Lousiana",
+   "Proposition": "Outer Continental Shelf Revenues for Coastal Protection and Restoration Fund Amendment",
+   "Description": "Require the state's federal revenue from Outer Continental Shelf renewable energy production to be deposited in the Coastal Protection and Restoration Fund"
+ },
+ {
+   "State": "Lousiana",
+   "Proposition": "Amendment 1",
+   "Description": "Add five more members to the judiciary commission and provide that the commission is responsible for investigating and recommending disciplinary actions, among other changes"
+ },
+ {
+   "State": "Lousiana",
+   "Proposition": "Amendment 2",
+   "Description": "Prohibit the consideration of a conference committee report or Senate amendments on an appropriations bill until 48 hours after the bill and a summary of the proposed changes have been distributed to all legislators"
+ },
+ {
+   "State": "Lousiana",
+   "Proposition": "Amendment 3",
+   "Description": "Allow the legislature to extend its regular session by two-day increments, up to a maximum of six days, in order to pass a bill appropriating money"
+ },
+ {
+   "State": "Lousiana",
+   "Proposition": "Amendment 4",
+   "Description": "Authorize the legislature to provide for property tax sales in state law"
+ },
+ {
+   "State": "Maine",
+   "Proposition": "Question 1",
+   "Description": "Limit the amount of campaign contributions to $5,000 from individuals and entities to political action committees that make independent expenditures"
+ },
+ {
+   "State": "Maine",
+   "Proposition": "Question 2",
+   "Description": "Authorize $25 million in general obligation bonds for research, development, and commercialization of for Maine-based public and private institutions in support of technological innovation"
+ },
+ {
+   "State": "Maine",
+   "Proposition": "Question 3",
+   "Description": "Authorize $10 million in general obligation bonds for the restoration of local community buildings"
+ },
+ {
+   "State": "Maine",
+   "Proposition": "Question 4",
+   "Description": "Authorize $30 million in general obligation bonds for the development and maintenance of outdoor trails"
+ },
+ {
+   "State": "Maine",
+   "Proposition": "Question 5",
+   "Description": "Replace the Maine state flag with a flag consisting of a pine tree and the North Star on a buff background"
+ },
+ {
+   "State": "Maryland",
+   "Proposition": "Question 1",
+   "Description": "Provide for a state constitutional right to reproductive freedom, defined to include abortion"
+ },
+ {
+   "State": "Massachusetts",
+   "Proposition": "Question 1",
+   "Description": "Authorize the state auditor to audit the state legislature, and remove some existing regulations regarding the auditing process"
+ },
+ {
+   "State": "Massachusetts",
+   "Proposition": "Question 2",
+   "Description": "Eliminate the requirement that students must pass the standards-based (MCAS) exam to graduate high school"
+ },
+ {
+   "State": "Massachusetts",
+   "Proposition": "Question 3",
+   "Description": "Provide for unionization and collective bargaining for transportation network drivers"
+ },
+ {
+   "State": "Massachusetts",
+   "Proposition": "Question 4",
+   "Description": "Allow persons 21 years of age or older to grow, possess, and use natural psychedelic substances, as well as establish a commission to regulate the licensing of psychedelic substances and services"
+ },
+ {
+   "State": "Massachusetts",
+   "Proposition": "Question 4",
+   "Description": "Increase the minimum wage for tipped employees to meet the state's standard minimum wage"
+ },
+ {
+   "State": "Minnesota",
+   "Proposition": "Amendment 1",
+   "Description": "Extend the dedication of lottery-derived revenue to Environment and Natural Resources Fund for 25 years"
+ },
+ {
+   "State": "Missouri",
+   "Proposition": "Amendment 1",
+   "Description": "Allow childcare establishments to be exempt from property tax"
+ },
+ {
+   "State": "Missouri",
+   "Proposition": "Amendment 4",
+   "Description": "Allow the Legislature to pass a law requiring Kansas City to increase funding for the Kansas City Police Department"
+ },
+ {
+   "State": "Missouri",
+   "Proposition": "Amendment 2",
+   "Description": "Legalize and regulate sports wagering in Missouri"
+ },
+ {
+   "State": "Missouri",
+   "Proposition": "Amendment 3",
+   "Description": "Provide for a state constitutional right to reproductive freedom, defined to include abortion"
+ },
+ {
+   "State": "Missouri",
+   "Proposition": "Amendment 5",
+   "Description": "Allow the Missouri Gaming Commission to issue one additional gambling boat license to operate on the portion of the Osage River from the Missouri River to the Bagnell Dam"
+ },
+ {
+   "State": "Missouri",
+   "Proposition": "Amendment 6",
+   "Description": "Define the administration of justice to include the levying of costs and fees to support the salaries and benefits for law enforcement personnel"
+ },
+ {
+   "State": "Missouri",
+   "Proposition": "Amendment 7",
+   "Description": "Prohibit ranked-choice voting (RCV) and the state local and governments from allowing noncitizens to vote"
+ },
+ {
+   "State": "Missouri",
+   "Proposition": "Proposition A",
+   "Description": "Increase the state's minimum wage to $15 per hour and require employers to provide earned paid sick leave for employees"
+ },
+ {
+   "State": "Montana",
+   "Proposition": "CI-126",
+   "Description": "Establish top-four primaries for federal and state offices in Montana"
+ },
+ {
+   "State": "Montana",
+   "Proposition": "CI-127",
+   "Description": "Require an electoral system in which candidates for certain offices must win a majority of the vote, rather than a plurality, to win the election"
+ },
+ {
+   "State": "Montana",
+   "Proposition": "CI-128",
+   "Description": "Provide for a state constitutional right to abortion before fetal viability"
+ },
+ {
+   "State": "Nebraska",
+   "Proposition": "Initiative 434",
+   "Description": "Prohibit abortion after the first trimester, except in cases of medical emergencies or if the pregnancy is the result of sexual assault or incest"
+ },
+ {
+   "State": "Nebraska",
+   "Proposition": "Initiative 436",
+   "Description": "Require employers to provide earned paid sick leave for employees"
+ },
+ {
+   "State": "Nebraska",
+   "Proposition": "Initiative 437",
+   "Description": "Legalize the medical use of marijuana in the state"
+ },
+ {
+   "State": "Nebraska",
+   "Proposition": "Initiative 438",
+   "Description": "Establish the Nebraska Medical Cannabis Commission to regulate the state's medical marijuana program"
+ },
+ {
+   "State": "Nebraska",
+   "Proposition": "Initiative 439",
+   "Description": "Provide for a state constitutional right to abortion before fetal viability"
+ },
+ {
+   "State": "Nebraska",
+   "Proposition": "Referendum 435",
+   "Description": "Uphold the law providing for an education scholarship program for students to attend accredited private schools"
+ },
+ {
+   "State": "Nevada",
+   "Proposition": "Question 1",
+   "Description": "Removes the constitutional status of the Board of Regents, which oversees state universities, allowing the legislature to change the governing structure of these universities through statute"
+ },
+ {
+   "State": "Nevada",
+   "Proposition": "Question 2",
+   "Description": "Revise language in the state constitution related to public entities that benefit individuals with mental illness, blindness, or deafness"
+ },
+ {
+   "State": "Nevada",
+   "Proposition": "Question 3",
+   "Description": "Establish top-five primaries and ranked-choice voting (RCV) for federal and state offices in Nevada"
+ },
+ {
+   "State": "Nevada",
+   "Proposition": "Question 4",
+   "Description": "Repeal language from the Nevada Constitution that allows the use of slavery and involuntary servitude as criminal punishments"
+ },
+ {
+   "State": "Nevada",
+   "Proposition": "Questoin 5",
+   "Description": "Amend the Sales and Use Tax of 1955 to provide a sales tax exemption for child and adult diapers"
+ },
+ {
+   "State": "Nevada",
+   "Proposition": "Question 6",
+   "Description": "Provide for a state constitutional right to abortion before fetal viability"
+ },
+ {
+   "State": "Nevada",
+   "Proposition": "Question 7",
+   "Description": "Require voters to present photo identification when voting in person or to provide the last four digits of their driver’s license or Social Security number when voting by mail"
+ },
+ {
+   "State": "New Hampshire",
+   "Proposition": "Increase Mandatory Judicial Retirement Age Amendment",
+   "Description": "Increase the mandatory judicial retirement age from 70 to 75"
+ },
+ {
+   "State": "New Mexico",
+   "Proposition": "Bond Question 1",
+   "Description": "Issues $30.76 million in bonds to fund senior citizens facilities"
+ },
+ {
+   "State": "New Mexico",
+   "Proposition": "Bond Question 2",
+   "Description": "Issues $19.305 million in bonds to fund public libraries"
+ },
+ {
+   "State": "New Mexico",
+   "Proposition": "Bond Question 3",
+   "Description": "Issue $230.26 million in bonds to fund capital improvement projects for higher education institutions, special public schools, and tribal schools"
+ },
+ {
+   "State": "New Mexico",
+   "Proposition": "Bond Question 4",
+   "Description": "Issues $10.297 million in bonds to modernize public safety radio communications systems"
+ },
+ {
+   "State": "New Mexico",
+   "Proposition": "Constitutional Amendment 1",
+   "Description": "Proportionally applies the disabled veteran property tax exemption according to a veteran's disability rating"
+ },
+ {
+   "State": "New Mexico",
+   "Proposition": "Constitutional Amendment 2",
+   "Description": "Increases the property tax exemption for veterans from $4,000 to $10,000, adjusted annually for inflation"
+ },
+ {
+   "State": "New Mexico",
+   "Proposition": "Constitutional Amendment 3",
+   "Description": "Authorize the designee of the dean of the University of New Mexico Law School serve as chair of the judicial nomination commission"
+ },
+ {
+   "State": "New Mexico",
+   "Proposition": "Constitutional Amendment 4",
+   "Description": "Authorize the board of county commissioners to set salaries for county officers and clarify that fees collected by the county are to be deposited into the county treasury"
+ },
+ {
+   "State": "New York",
+   "Proposition": "Proposal 1",
+   "Description": "Provide that people cannot be denied rights based on their \"ethnicity, national origin, age, and disability\" or \"sex, including sexual orientation, gender identity, gender expression, pregnancy, pregnancy outcomes, and reproductive healthcare and autonomy\""
+ },
+ {
+   "State": "North Carolina",
+   "Proposition": "Citizenship Requirement for Voting Amendment",
+   "Description": "Prohibit the state and local governments from allowing noncitizens to vote"
+ },
+ {
+   "State": "North Dakota",
+   "Proposition": "Initiated Measure 1",
+   "Description": "Set an age limit for election or appointment to the U.S. Congress"
+ },
+ {
+   "State": "North Dakota",
+   "Proposition": "Constitutional Measure 1",
+   "Description": "Update language used in the state constitution to describe certain state institutions such as changing \"insane\" to \"individuals with mental illness\", \"feebleminded\" to \"individuals with developmental disabilities\", and \"deaf and dumb\" to \"deaf and hard of hearing\""
+ },
+ {
+   "State": "North Dakota",
+   "Proposition": "Constitutional Measure 2",
+   "Description": "Establish a single-subject rule for initiatives; increase the signature requirement for constitutional initiatives; and require constitutional initiatives to be approved at two elections"
+ },
+ {
+   "State": "North Dakota",
+   "Proposition": "Constitutional Measure 3",
+   "Description": "Change requirements for transfers from the state legacy fund, a fund that receives 30% of tax revenue from oil and gas production"
+ },
+ {
+   "State": "North Dakota",
+   "Proposition": "Initiated Measure 4",
+   "Description": "Prohibit the state and local governments from levying taxes on the assessed value of any real or personal property except for those designed to pay for bonded indebtedness"
+ },
+ {
+   "State": "North Dakota",
+   "Proposition": "Initiated Measure 5",
+   "Description": "Legalize the recreational or personal use of marijuana"
+ },
+ {
+   "State": "Ohio",
+   "Proposition": "Issue 1",
+   "Description": "Establish the Ohio Citizens Redistricting Commission (CRC), a 15-member non-politician commission responsible for adopting state legislative and congressional redistricting plans"
+ },
+ {
+   "State": "Oklahoma",
+   "Proposition": "State Question 833",
+   "Description": "Allow municipalities to create public infrastructure districts when all property owners within the proposed district sign a petition and give public infrastructure districts the authority to issue bonds for public improvements if approved by voters within the district"
+ },
+ {
+   "State": "Oklahoma",
+   "Proposition": "State Question 834",
+   "Description": "Prohibit the state and local governments from allowing noncitizens to vote"
+ },
+ {
+   "State": "Oregon",
+   "Proposition": "Measure 115",
+   "Description": "Allow the Legislature to impeach elected state executives"
+ },
+ {
+   "State": "Oregon",
+   "Proposition": "Measure 116",
+   "Description": "Establish the Independent Public Service Compensation Commission to determine certain public officials' salaries"
+ },
+ {
+   "State": "Oregon",
+   "Proposition": "Measure 117",
+   "Description": "Establish ranked-choice voting (RCV) for federal and state offices in Oregon"
+ },
+ {
+   "State": "Oregon",
+   "Proposition": "Measure 118",
+   "Description": "Require Oregon issue rebates to residents from surplus corporate tax revenue"
+ },
+ {
+   "State": "Oregon",
+   "Proposition": "Measure 119",
+   "Description": "Require cannabis businesses to submit to the state Liquor and Cannabis Commission a signed labor peace agreement between the business and a labor organization with its licensure or renewal application"
+ },
+ {
+   "State": "Rhode Island",
+   "Proposition": "Question 1",
+   "Description": "Call for a state constitutional convention to be held"
+ },
+ {
+   "State": "Rhode Island",
+   "Proposition": "Question 2",
+   "Description": "Issue $160.5 million in bonds for improvements to higher education facilities"
+ },
+ {
+   "State": "Rhode Island",
+   "Proposition": "Question 3",
+   "Description": "Issue $120 million in bonds to increase the availability of housing in the state"
+ },
+ {
+   "State": "Rhode Island",
+   "Proposition": "Question 4",
+   "Description": "Issue $53 million in bonds for environmental-related infrastructure, local recreation projects, and for preservation of land"
+ },
+ {
+   "State": "Rhode Island",
+   "Proposition": "Question 5",
+   "Description": "Issue $10 million in bonds for funding for 1:1 matching grants to continue the Cultural Arts and Economy Grant program administered by the Rhode Island state council on the arts, and for improvements and renovations to the Tomaquag Museum, the Newport Contemporary Ballet, and the Trinity Repertory Company"
+ },
+ {
+   "State": "South Carolina",
+   "Proposition": "Citizenship Requirement for Voting Amendment",
+   "Description": "Prohibit the state and local governments from allowing noncitizens to vote"
+ },
+ {
+   "State": "South Dakota",
+   "Proposition": "Constitutional Amendment E",
+   "Description": "Amend the constitution to change male pronouns in the Constitution to gender-neutral terms or titles"
+ },
+ {
+   "State": "South Dakota",
+   "Proposition": "Constitutional Amendment F",
+   "Description": "Amend the South Dakota Constitution to provide that the state \"may impose a work requirement on any person ... who has not been diagnosed as being physically or mentally disabled\" for eligible individuals to receive Medicaid under the Medicaid expansion that took effect on July 1, 2023"
+ },
+ {
+   "State": "South Dakota",
+   "Proposition": "Constitutional Amendment G",
+   "Description": "Provide for a state constitutional right to abortion with a trimester framework for regulations"
+ },
+ {
+   "State": "South Dakota",
+   "Proposition": "Constitutional Amendment H",
+   "Description": "Establish top-two primaries for federal, state, and certain local offices in South Dakota"
+ },
+ {
+   "State": "South Dakota",
+   "Proposition": "Initiated Measure 28",
+   "Description": "Prohibit state sales taxes on anything sold for human consumption, not including alcoholic beverages or prepared food"
+ },
+ {
+   "State": "South Dakota",
+   "Proposition": "Initiated Measure 29",
+   "Description": "Legalize the recreational or personal use of marijuana"
+ },
+ {
+   "State": "South Dakota",
+   "Proposition": "Referred Law 21",
+   "Description": "Uphold Senate Bill 201, which would provide requirements for regulating carbon dioxide pipelines and other transmission facilities, and allow counties to impose a surcharge on certain pipeline companies"
+ },
+ {
+   "State": "Utah",
+   "Proposition": "Utah Amendment A",
+   "Description": "Require taxes on intangible property and income to be used to maintain a public education funding framework, provided through state law, that (1) uses a portion of revenue growth for Uniform School Fund expenditures for changes in student enrollment and long-term inflation and (2) provides a budgetary stabilization account; allow state to use tax revenue for other purposes after education funding requirements are met"
+ },
+ {
+   "State": "Utah",
+   "Proposition": "Utah Amendment D",
+   "Description": "Provide in the constitution that the state legislature has the power to amend or repeal a citizen initiative; prohibit foreign individuals from influencing a ballot initiative"
+ },
+ {
+   "State": "Virginia",
+   "Proposition": "Property Tax Exemption for Veterans and Surviving Spouses Amendment",
+   "Description": "Amend language in the Virginia Constitution regarding property tax exemptions for veterans and surviving spouses to say died in the line of duty rather than killed in action"
+ },
+ {
+   "State": "Washington",
+   "Proposition": "Initiative 2066",
+   "Description": "Prohibit state and local governments from restricting access to natural gas"
+ },
+ {
+   "State": "Washington",
+   "Proposition": "Initiative 2109",
+   "Description": "Repeal the capital gains excise tax imposed on long-term capital assets by individuals with capital gains over $250,000"
+ },
+ {
+   "State": "Washington",
+   "Proposition": "Initiative 2117",
+   "Description": "Prohibit carbon tax credit trading and repeal provisions of the 2021 Washington Climate Commitment Act (CCA), a state law that provided for a cap and invest program designed to reduce greenhouse gas (GHG) emissions by 95% by 2050"
+ },
+ {
+   "State": "Washington",
+   "Proposition": "Initiative 2124",
+   "Description": "Allow all employees and self-employed individuals to opt out of paying the tax and receiving benefits under WA Cares, the state's long-term services and supports trust health care program"
+ },
+ {
+   "State": "West Virginia",
+   "Proposition": "Amendment 1",
+   "Description": "Prohibit people from participating in \"the practice of medically assisted suicide, euthanasia, or mercy killing of a person\""
+ },
+ {
+   "State": "Wisconsin",
+   "Proposition": "Question 1",
+   "Description": "Prohibit any level of government in the state from applying or accepting non-governmental funds or equipment for election administration"
+ },
+ {
+   "State": "Wisconsin",
+   "Proposition": "Question 2",
+   "Description": "Provide that only election officials designated by law may administer elections"
+ },
+ {
+   "State": "Wisconsin",
+   "Proposition": "Question 1",
+   "Description": "Prohibit the legislature from delegating its power to appropriate money"
+ },
+ {
+   "State": "Wisconsin",
+   "Proposition": "Question 2",
+   "Description": "Require legislative approval before the governor can expend federal money appropriated to the state"
+ },
+ {
+   "State": "Wisconsin",
+   "Proposition": "Citizenship Voting Requirement Amendment",
+   "Description": "Prohibit the state and local governments from allowing noncitizens to vote"
+ },
+ {
+   "State": "Wyoming",
+   "Proposition": "Property Tax on Residential Property and Owner-Occupied Primary Residences Amendment",
+   "Description": "Add residential real property as a fourth, separate, class of property and authorize the legislature to create a subclass of residential property for owner-occupied primary residences, which could be assessed at a rate other than the uniform rate for property in the class"
+ }
+]

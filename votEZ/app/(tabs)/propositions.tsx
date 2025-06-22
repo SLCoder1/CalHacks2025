@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect } from 'react';
 import {
   StyleSheet,
   View,
-  ScrollView,
   TouchableOpacity,
   Text,
   TextInput,
@@ -10,90 +9,52 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+// If you have ThemedText and ThemedView, import them. Otherwise, use Text and View.
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { usePageContext } from '@/components/PageContext';
+import DropDownPicker from 'react-native-dropdown-picker';
+import propositions from '../../data/Propositions 2024 - Sheet1.json';
 
 interface Proposition {
-  id: string;
-  title: string;
-  description: string;
-  simplifiedDescription: string;
-  impact: string;
-  state: string;
+  State: string;
+  Proposition: string;
+  Description: string;
 }
 
 export default function PropositionsScreen() {
   const router = useRouter();
   const { setCurrentPageContent } = usePageContext();
   const [searchQuery, setSearchQuery] = useState('');
+  const [stateOpen, setStateOpen] = useState(false);
+  const [selectedState, setSelectedState] = useState<string | null>(null);
 
-  // Sample propositions data - you can expand this
-  const [propositionsData] = useState<Proposition[]>([
-    {
-      id: '1',
-      title: 'Proposition 1',
-      description: 'Constitutional amendment to protect reproductive freedom',
-      simplifiedDescription: 'This proposition would add the right to abortion and contraception to the California Constitution.',
-      impact: 'If passed, abortion and contraception would be protected rights in California, even if federal laws change.',
-      state: 'California'
-    },
-    {
-      id: '2',
-      title: 'Proposition 2',
-      description: 'Bond measure for climate change and clean energy',
-      simplifiedDescription: 'This proposition would allow the state to borrow money to fund climate change programs and clean energy projects.',
-      impact: 'If passed, California could borrow up to $10 billion for climate programs, which would be paid back with interest over time.',
-      state: 'California'
-    },
-    {
-      id: '3',
-      title: 'Proposition A',
-      description: 'Property tax relief for homeowners',
-      simplifiedDescription: 'This proposition would reduce property taxes for homeowners by increasing the homestead exemption.',
-      impact: 'If passed, homeowners would pay less in property taxes, but local governments might have less money for services.',
-      state: 'Texas'
-    },
-    {
-      id: '4',
-      title: 'Proposal 1',
-      description: 'Environmental bond act',
-      simplifiedDescription: 'This proposal would allow the state to borrow money for environmental projects like clean water and climate change.',
-      impact: 'If passed, New York could borrow up to $4.2 billion for environmental projects, paid back over time.',
-      state: 'New York'
-    },
-    {
-      id: '5',
-      title: 'Amendment 1',
-      description: 'Voting rights and election security',
-      simplifiedDescription: 'This amendment would require voter ID and limit mail-in voting options.',
-      impact: 'If passed, voters would need to show ID to vote and mail-in voting would be more restricted.',
-      state: 'Florida'
-    },
-    {
-      id: '6',
-      title: 'Measure 110',
-      description: 'Drug decriminalization and treatment',
-      simplifiedDescription: 'This measure would decriminalize possession of small amounts of drugs and fund addiction treatment.',
-      impact: 'If passed, drug possession would be treated as a health issue rather than a crime, with more funding for treatment programs.',
-      state: 'Oregon'
-    }
-  ]);
-
-  // Filter propositions based on search query
-  const filteredPropositions = useMemo(() => {
-    if (!searchQuery.trim()) {
-      return propositionsData;
-    }
-    
-    const query = searchQuery.toLowerCase();
-    return propositionsData.filter(proposition => 
-      proposition.title.toLowerCase().includes(query) ||
-      proposition.description.toLowerCase().includes(query) ||
-      proposition.simplifiedDescription.toLowerCase().includes(query) ||
-      proposition.state.toLowerCase().includes(query)
+  // Get unique states from the JSON file
+  const stateOptions = useMemo(() => {
+    const uniqueStates = Array.from(
+      new Set(propositions.map((row: any) => row.State && row.State.trim()).filter(Boolean))
     );
-  }, [propositionsData, searchQuery]);
+    return uniqueStates.map((state: string) => ({
+      label: state,
+      value: state,
+    }));
+  }, []);
+
+  // Filter propositions for the selected state and search query
+  const filteredPropositions = useMemo(() => {
+    let filtered = propositions;
+    if (selectedState) {
+      filtered = filtered.filter((row: any) => row.State && row.State.trim() === selectedState);
+    }
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter((proposition: any) =>
+        (proposition.Proposition && proposition.Proposition.toLowerCase().includes(query)) ||
+        (proposition.Description && proposition.Description.toLowerCase().includes(query))
+      );
+    }
+    return filtered;
+  }, [selectedState, searchQuery]);
 
   // Update page content when search query or filtered propositions change
   useEffect(() => {
@@ -132,42 +93,69 @@ export default function PropositionsScreen() {
   const renderProposition = ({ item }: { item: Proposition }) => (
     <View style={styles.propositionCard}>
       <View style={styles.propositionHeader}>
-        <ThemedText style={styles.propositionTitle}>{item.title}</ThemedText>
+        <ThemedText style={styles.propositionTitle}>{item.Proposition}</ThemedText>
         <View style={styles.stateBadge}>
-          <ThemedText style={styles.stateBadgeText}>{item.state}</ThemedText>
+          <ThemedText style={styles.stateBadgeText}>{item.State}</ThemedText>
         </View>
       </View>
       <ThemedText style={styles.propositionDescription}>
-        {item.simplifiedDescription}
+        {item.Description}
       </ThemedText>
-      <View style={styles.impactContainer}>
-        <ThemedText style={styles.impactLabel}>Impact:</ThemedText>
-        <ThemedText style={styles.impactText}>{item.impact}</ThemedText>
-      </View>
     </View>
   );
 
+  // If no state selected, show only state picker
+  if (!selectedState) {
+    return (
+      <ThemedView style={styles.container}>
+        <View style={[styles.header, { borderBottomWidth: 0 }]}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <Ionicons name="arrow-back" size={24} color="#0a7ea4" />
+          </TouchableOpacity>
+          <ThemedText style={styles.headerTitle}>Simplified Propositions</ThemedText>
+          <View style={styles.placeholder} />
+        </View>
+        <Text style={styles.instructions}>Select your state to view 2024 ballot propositions.</Text>
+        <DropDownPicker
+          open={stateOpen}
+          value={selectedState}
+          items={stateOptions}
+          setOpen={setStateOpen}
+          setValue={setSelectedState}
+          placeholder="Select state"
+          searchable={true}
+          containerStyle={{ width: 260, marginBottom: 16, alignSelf: 'center' }}
+          zIndex={2000}
+        />
+      </ThemedView>
+    );
+  }
+
+  // After state is selected, show search and proposition UI
   return (
     <ThemedView style={styles.container}>
-      {/* Header with back button */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => router.back()}
+          onPress={() => setSelectedState(null)}
         >
           <Ionicons name="arrow-back" size={24} color="#0a7ea4" />
         </TouchableOpacity>
-        <ThemedText style={styles.headerTitle}>Simplified Propositions</ThemedText>
+        <ThemedText style={styles.headerTitle}>{selectedState} Propositions</ThemedText>
         <View style={styles.placeholder} />
       </View>
-
+      {/* Thin line above search bar */}
+      <View style={{ height: 1, backgroundColor: '#E0E0E0', width: '100%' }} />
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <View style={styles.searchBar}>
           <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search propositions, states, or topics..."
+            placeholder="Search propositions or topics..."
             placeholderTextColor="#666"
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -198,7 +186,7 @@ export default function PropositionsScreen() {
       <FlatList
         data={filteredPropositions}
         renderItem={renderProposition}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(_, idx) => idx.toString()}
         style={styles.content}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
@@ -213,7 +201,7 @@ export default function PropositionsScreen() {
             </ThemedText>
             {searchQuery.length > 0 && (
               <ThemedText style={styles.emptyStateSubtext}>
-                Try searching for a different term or state
+                Try searching for a different term
               </ThemedText>
             )}
           </View>
@@ -235,8 +223,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 60,
     paddingBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    // REMOVE or comment out the next two lines to remove the thin horizontal line:
+    // borderBottomWidth: 1,
+    // borderBottomColor: '#E0E0E0',
   },
   backButton: {
     padding: 8,
@@ -249,6 +238,7 @@ const styles = StyleSheet.create({
   placeholder: {
     width: 40,
   },
+  instructions: { fontSize: 16, color: '#0a7ea4', marginBottom: 24, textAlign: 'center' },
   searchContainer: {
     paddingHorizontal: 20,
     paddingVertical: 16,
@@ -325,22 +315,6 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 12,
   },
-  impactContainer: {
-    backgroundColor: '#E3F2FD',
-    padding: 12,
-    borderRadius: 8,
-  },
-  impactLabel: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#0a7ea4',
-    marginBottom: 4,
-  },
-  impactText: {
-    fontSize: 13,
-    color: '#333',
-    lineHeight: 18,
-  },
   emptyState: {
     flex: 1,
     justifyContent: 'center',
@@ -357,4 +331,4 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'center',
   },
-}); 
+});
