@@ -8,6 +8,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import ChatBot from '@/components/ChatBot';
 import TestScraper from '@/components/TestScraper';
 
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
@@ -28,6 +29,7 @@ export default function RootLayout() {
       <StatusBar style="auto" />
       <TestScraper />
       <ChatBot />
+
     </ThemeProvider>
   );
 }
