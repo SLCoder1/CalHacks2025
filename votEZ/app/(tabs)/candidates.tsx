@@ -31,10 +31,6 @@ export default function CandidatesTab() {
   // Load unique states from the JSON for governor dropdown only
   const [states, setStates] = useState<{ label: string; value: string }[]>([]);
 
-  // Returns the full candidate data object for a given candidate name
-  const getCandidateByName = (name: string) =>
-    candidateOptions.find((c) => c.label === name);
-
   useEffect(() => {
     // Get unique states from the JSON
     const uniqueStates = Array.from(
@@ -45,6 +41,24 @@ export default function CandidatesTab() {
       value: state,
     })));
   }, []);
+
+  // Candidate options logic - moved before useEffect
+  let candidateOptions: { label: string; value: string; fullData?: any }[] = [];
+  if (office === 'governor' && state) {
+    // Filter governors.json for selected state and sort by name
+    candidateOptions = governors
+      .filter((row: any) => row.State && row.State.trim() === state)
+      .sort((a: any, b: any) => (a.Candidate || '').localeCompare(b.Candidate || ''))
+      .map((row: any) => ({
+        label: row.Candidate,
+        value: row.Candidate,
+        fullData: row, // Pass all data for detail page
+      }));
+  }
+
+  // Returns the full candidate data object for a given candidate name
+  const getCandidateByName = (name: string) =>
+    candidateOptions.find((c) => c.label === name);
 
   // Update page content when state, office, or selected candidate changes
   useEffect(() => {
@@ -67,6 +81,9 @@ export default function CandidatesTab() {
       if (c.Agenda) {
         content += `Agenda: ${c.Agenda}\n`;
       }
+      if (c.AgendaDetail) {
+        content += `Agenda Details: ${c.AgendaDetail}\n`;
+      }
     } else if (candidateOptions.length > 0) {
       content += `\nAvailable Candidates:\n`;
       candidateOptions.forEach(candidate => {
@@ -74,8 +91,28 @@ export default function CandidatesTab() {
       });
     }
     
+    // Add detailed comparison information
     if (compareSelection.length > 0) {
       content += `\nComparing: ${compareSelection.join(' vs ')}\n`;
+      
+      // Add detailed information for each candidate being compared
+      compareSelection.forEach(candidateName => {
+        const candidate = candidateOptions.find(c => c.label === candidateName);
+        if (candidate && candidate.fullData) {
+          const c = candidate.fullData;
+          content += `\n${c.Candidate}:\n`;
+          if (c.Description) {
+            content += `Description: ${c.Description}\n`;
+          }
+          if (c.Agenda) {
+            content += `Agenda: ${c.Agenda}\n`;
+          }
+          if (c.AgendaDetail) {
+            content += `Agenda Details: ${c.AgendaDetail}\n`;
+          }
+          content += `---\n`;
+        }
+      });
     }
 
     setCurrentPageContent({
@@ -87,11 +124,16 @@ export default function CandidatesTab() {
         state: state,
         selectedCandidate: selectedCandidate?.fullData?.Candidate,
         compareSelection: compareSelection,
+        candidateData: compareSelection.length > 0 ? 
+          compareSelection.map(name => {
+            const candidate = candidateOptions.find(c => c.label === name);
+            return candidate?.fullData;
+          }).filter(Boolean) : [],
       }
     });
 
     return () => setCurrentPageContent(null);
-  }, [office, state, selectedCandidate, compareSelection, setCurrentPageContent]);
+  }, [office, state, selectedCandidate, compareSelection, candidateOptions, setCurrentPageContent]);
 
   // Effect to show comparison automatically when two are selected
   useEffect(() => {
@@ -158,20 +200,6 @@ export default function CandidatesTab() {
   const handleBackFromDetail = () => {
     setSelectedCandidate(null);
   };
-
-  // Candidate options logic
-  let candidateOptions: { label: string; value: string; fullData?: any }[] = [];
-  if (office === 'governor' && state) {
-    // Filter governors.json for selected state and sort by name
-    candidateOptions = governors
-      .filter((row: any) => row.State && row.State.trim() === state)
-      .sort((a: any, b: any) => (a.Candidate || '').localeCompare(b.Candidate || ''))
-      .map((row: any) => ({
-        label: row.Candidate,
-        value: row.Candidate,
-        fullData: row, // Pass all data for detail page
-      }));
-  }
 
   // Show candidate cards if office is selected and (if governor) state is selected
   const showCards =
