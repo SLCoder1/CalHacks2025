@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -14,6 +14,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import DropDownPicker from 'react-native-dropdown-picker';
 import propositions from '../../data/Propositions 2024 - Sheet1.json';
+import { usePageContext } from '@/components/PageContext';
 
 interface Proposition {
   State: string;
@@ -23,6 +24,7 @@ interface Proposition {
 
 export default function PropositionsScreen() {
   const router = useRouter();
+  const { setCurrentPageContent } = usePageContext();
   const [searchQuery, setSearchQuery] = useState('');
   const [stateOpen, setStateOpen] = useState(false);
   const [selectedState, setSelectedState] = useState<string | null>(null);
@@ -53,6 +55,40 @@ export default function PropositionsScreen() {
     }
     return filtered;
   }, [selectedState, searchQuery]);
+
+  // Update page content when search query or filtered propositions change
+  useEffect(() => {
+    let content = 'Simplified Propositions Page\n\n';
+    
+    if (searchQuery) {
+      content += `Search Query: "${searchQuery}"\n`;
+      content += `Found ${filteredPropositions.length} result${filteredPropositions.length !== 1 ? 's' : ''}\n\n`;
+    }
+    
+    if (filteredPropositions.length > 0) {
+      content += 'Available Propositions:\n';
+      filteredPropositions.forEach(proposition => {
+        content += `\n${proposition.title} (${proposition.state})\n`;
+        content += `Description: ${proposition.simplifiedDescription}\n`;
+        content += `Impact: ${proposition.impact}\n`;
+      });
+    } else {
+      content += 'No propositions found matching your search.';
+    }
+
+    setCurrentPageContent({
+      title: 'Simplified Propositions',
+      type: 'propositions',
+      content: content,
+      metadata: {
+        searchQuery: searchQuery,
+        totalResults: filteredPropositions.length,
+        states: [...new Set(filteredPropositions.map(p => p.state))],
+      }
+    });
+
+    return () => setCurrentPageContent(null);
+  }, [searchQuery, filteredPropositions, setCurrentPageContent]);
 
   const renderProposition = ({ item }: { item: Proposition }) => (
     <View style={styles.propositionCard}>

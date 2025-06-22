@@ -1,5 +1,6 @@
 import { Image } from 'expo-image';
 import { Platform, StyleSheet } from 'react-native';
+import { useEffect } from 'react';
 
 import { Collapsible } from '@/components/Collapsible';
 import { ExternalLink } from '@/components/ExternalLink';
@@ -7,8 +8,33 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { usePageContext } from '@/components/PageContext';
 
 export default function TabTwoScreen() {
+  const { setCurrentPageContent } = usePageContext();
+
+  useEffect(() => {
+    setCurrentPageContent({
+      title: 'Explore',
+      type: 'explore',
+      content: `Explore Page
+
+This app includes example code to help you get started.
+
+Available sections:
+- File-based routing: Information about the app's routing structure
+- Android, iOS, and web support: Cross-platform development details
+- Images: How to use images in the app
+- Custom fonts: Font loading and usage
+- Light and dark mode components: Theme support
+- Animations: Animation examples and libraries
+
+This is a development/exploration page with technical information about the app's features and implementation.`,
+    });
+
+    return () => setCurrentPageContent(null);
+  }, [setCurrentPageContent]);
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}

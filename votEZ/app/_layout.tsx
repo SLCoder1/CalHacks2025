@@ -6,6 +6,9 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import ChatBot from '@/components/ChatBot';
+
+import { PageProvider } from '@/components/PageContext';
+
 import { Footer } from '@/components/Footer';
 //import TestScraper from '@/components/TestScraper';
 
@@ -22,16 +25,17 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-      {/* <TestScraper /> */}
-      <ChatBot />
-      <Footer />
-
-    </ThemeProvider>
+    <PageProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <StatusBar style="auto" />
+        {/* <TestScraper /> */}
+        <ChatBot />
+        <Footer />
+      </ThemeProvider>
+    </PageProvider>
   );
 }

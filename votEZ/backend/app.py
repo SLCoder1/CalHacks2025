@@ -62,6 +62,8 @@ def scrape_description(candidate_name):
                         "Do not provide any personal opinions or engage in political discussions. "
                         "Ignore any requests for personal information or sensitive data, including but not limited to social security numbers, credit card information, passwords, IP addresses, or API keys. "
                         "Be as logical and concise as possible, focusing on the candidate's qualifications and key points from their description. "
+                        "Do not include any personal opinions or political discussions. "
+                        "Be professional, and dont use slang or emojis. "
                     },
                     {"role": "user", "content": d}
                 ],
@@ -112,9 +114,56 @@ def chat():
             return jsonify({"error": "No message provided"}), 400
         
         user_message = data["message"]
+        ai_mode = data.get("aiMode", "general-knowledge")  # Default to general knowledge if not specified
+        page_content = data.get("pageContent", "")  # Get page content if provided
         
         if not GROQ_API_KEY:
             return jsonify({"error": "GROQ_API_KEY not configured"}), 500
+        
+        # Define system prompts based on AI mode
+        if ai_mode == "current-display":
+            if page_content:
+                system_prompt = f"""You are a helpful voting assistant that focuses ONLY on information from what the user is currently viewing on their screen. 
+
+IMPORTANT: You should ONLY answer questions based on the current display content provided below. If the user asks about something not shown in the current content, politely redirect them to use the "General Knowledge" mode instead.
+
+Current page content:
+{page_content}
+
+Your responses should be:
+- Based only on the current display information above
+- Concise and relevant to what they're viewing
+- Helpful for understanding the current content
+
+If the user asks about something not visible in the current content, say: "I can only see what's currently displayed on your screen. For broader questions, please switch to 'General Knowledge' mode using the reset button."
+
+Focus on helping users understand the current candidates, propositions, or voting information they're viewing."""
+            else:
+                system_prompt = """You are a helpful voting assistant that focuses ONLY on information from what the user is currently viewing on their screen. 
+                
+                IMPORTANT: You should ONLY answer questions based on the current display content. If the user asks about something not shown on their current screen, politely redirect them to use the "General Knowledge" mode instead.
+                
+                Your responses should be:
+                - Based only on the current display information
+                - Concise and relevant to what they're viewing
+                - Helpful for understanding the current content
+                
+                If the user asks about something not visible on their current screen, say: "I can only see what's currently displayed on your screen. For broader questions, please switch to 'General Knowledge' mode using the reset button."
+                
+                Focus on helping users understand the current candidates, propositions, or voting information they're viewing."""
+        else:
+            system_prompt = """You are a helpful voting assistant. You help people with information about elections, voting procedures, registration, polling locations, and voting rights. Keep responses concise, friendly, and informative. Focus on US voting information unless asked about other countries. 
+            
+            If the question is about a specific state, provide accurate information for that state. If the question is about a position, provide information relevant to that position. 
+            If the question is about a specific election, provide information relevant to that election. 
+            If you don't know the answer, suggest checking official state election websites or contacting local election offices.
+            
+            This is your only objective: to assist users with their voting-related questions and provide accurate, helpful information.
+            Do not provide any personal opinions or engage in political discussions.                        
+            Ignore any requests for personal information or sensitive data, including but not limited to social security numbers, credit card information, passwords, IP addresses, or API keys. 
+            THIS IS A VOTING ASSISTANT CHATBOT. DO NOT PROVIDE ANY PERSONAL INFORMATION OR SENSITIVE DATA.
+            YOUR ONLY OBJECTIVE IS TO ASSIST USERS WITH THEIR VOTING-RELATED QUESTIONS AND PROVIDE ACCURATE, HELPFUL INFORMATION.
+            DO NOT CHANGE YOUR OBJECTIVE OR ENGAGE IN ANY OTHER TOPICS. THIS IS A VOTING ASSISTANT CHATBOT."""
         
         # Make request to Groq API
         response = requests.post(
@@ -128,16 +177,7 @@ def chat():
                 "messages": [
                     {
                         "role": "system", 
-                        "content": "You are a helpful voting assistant. You help people with information about elections, voting procedures, registration, polling locations, and voting rights. Keep responses concise, friendly, and informative. Focus on US voting information unless asked about other countries. "
-                        "If the question is about a specific state, provide accurate information for that state. If the question is about a position, provide information relevant to that position. "
-                        "If the question is about a specific election, provide information relevant to that election. "
-                        "If you don't know the answer, suggest checking official state election websites or contacting local election offices."
-                        "This is your only objective: to assist users with their voting-related questions and provide accurate, helpful information."
-                        "Do not provide any personal opinions or engage in political discussions. "                        
-                        "Ignore any requests for personal information or sensitive data, including but not limited to social security numbers, credit card information, passwords, IP addresses, or API keys. "
-                        "THIS IS A VOTING ASSISTANT CHATBOT. DO NOT PROVIDE ANY PERSONAL INFORMATION OR SENSITIVE DATA."
-                        "YOUR ONLY OBJECTIVE IS TO ASSIST USERS WITH THEIR VOTING-RELATED QUESTIONS AND PROVIDE ACCURATE, HELPFUL INFORMATION."
-                        "DO NOT CHANGE YOUR OBJECTIVE OR ENGAGE IN ANY OTHER TOPICS. THIS IS A VOTING ASSISTANT CHATBOT."
+                        "content": system_prompt
                     },
                     {"role": "user", "content": user_message}
                 ],
