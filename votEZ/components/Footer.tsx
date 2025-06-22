@@ -5,7 +5,7 @@ export function Footer() {
   return (
     <View style={styles.footer}>
       <Text style={styles.footerText}>
-        Information sourced from ballotopedia.org
+        Information sourced from ballotopedia.org. Data is from 2022-2024, so varying information may be outdated.
       </Text>
     </View>
   );
