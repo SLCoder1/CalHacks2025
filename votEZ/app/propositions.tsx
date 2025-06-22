@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -12,6 +12,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { usePageContext } from '@/components/PageContext';
 
 interface Proposition {
   id: string;
@@ -24,6 +25,7 @@ interface Proposition {
 
 export default function PropositionsScreen() {
   const router = useRouter();
+  const { setCurrentPageContent } = usePageContext();
   const [searchQuery, setSearchQuery] = useState('');
 
   // Sample propositions data - you can expand this
@@ -92,6 +94,40 @@ export default function PropositionsScreen() {
       proposition.state.toLowerCase().includes(query)
     );
   }, [propositionsData, searchQuery]);
+
+  // Update page content when search query or filtered propositions change
+  useEffect(() => {
+    let content = 'Simplified Propositions Page\n\n';
+    
+    if (searchQuery) {
+      content += `Search Query: "${searchQuery}"\n`;
+      content += `Found ${filteredPropositions.length} result${filteredPropositions.length !== 1 ? 's' : ''}\n\n`;
+    }
+    
+    if (filteredPropositions.length > 0) {
+      content += 'Available Propositions:\n';
+      filteredPropositions.forEach(proposition => {
+        content += `\n${proposition.title} (${proposition.state})\n`;
+        content += `Description: ${proposition.simplifiedDescription}\n`;
+        content += `Impact: ${proposition.impact}\n`;
+      });
+    } else {
+      content += 'No propositions found matching your search.';
+    }
+
+    setCurrentPageContent({
+      title: 'Simplified Propositions',
+      type: 'propositions',
+      content: content,
+      metadata: {
+        searchQuery: searchQuery,
+        totalResults: filteredPropositions.length,
+        states: [...new Set(filteredPropositions.map(p => p.state))],
+      }
+    });
+
+    return () => setCurrentPageContent(null);
+  }, [searchQuery, filteredPropositions, setCurrentPageContent]);
 
   const renderProposition = ({ item }: { item: Proposition }) => (
     <View style={styles.propositionCard}>

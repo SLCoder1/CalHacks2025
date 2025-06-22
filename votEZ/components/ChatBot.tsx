@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
 import { getApiUrl } from '@/config/api';
+import { usePageContext } from './PageContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -24,6 +25,8 @@ interface Message {
   isUser: boolean;
   timestamp: Date;
 }
+
+type AIMode = 'current-display' | 'general-knowledge' | null;
 
 // Custom color scheme for the chatbot
 const chatColors = {
@@ -42,10 +45,11 @@ const chatColors = {
 
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
+  const [aiMode, setAiMode] = useState<AIMode>(null);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: 'Hello! I\'m your voting assistant. How can I help you today?',
+      text: 'Hello! I\'m your voting assistant. Please select how you\'d like me to help you:\n\n📋 Current Display Info: I\'ll only use information from what you\'re currently viewing\n\n🧠 General Knowledge: I can use my broader knowledge to answer your questions',
       isUser: false,
       timestamp: new Date(),
     },
@@ -56,6 +60,7 @@ export default function ChatBot() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(0)).current;
   const colorScheme = useColorScheme();
+  const pageContext = usePageContext();
 
   const colors = Colors[colorScheme ?? 'light'];
 
@@ -90,7 +95,7 @@ export default function ChatBot() {
   }, [isOpen]);
 
   const sendMessage = async () => {
-    if (!inputText.trim() || isLoading) return;
+    if (!inputText.trim() || isLoading || aiMode === null) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -105,14 +110,27 @@ export default function ChatBot() {
 
     try {
       const API_URL = getApiUrl();
+      
+      // Prepare request body
+      const requestBody: any = {
+        message: userMessage.text,
+        aiMode: aiMode,
+      };
+
+      // Include page content if in current-display mode
+      if (aiMode === 'current-display') {
+        const pageContent = pageContext.getPageContentAsText();
+        if (pageContent) {
+          requestBody.pageContent = pageContent;
+        }
+      }
+
       const response = await fetch(`${API_URL}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          message: userMessage.text,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       const data = await response.json();
@@ -141,6 +159,31 @@ export default function ChatBot() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const selectAIMode = (mode: AIMode) => {
+    setAiMode(mode);
+    const modeMessage: Message = {
+      id: Date.now().toString(),
+      text: mode === 'current-display' 
+        ? '📋 Mode selected: I\'ll focus on information from what you\'re currently viewing. How can I help you with the current content?' 
+        : '🧠 Mode selected: I can use my general knowledge to answer your questions. What would you like to know?',
+      isUser: false,
+      timestamp: new Date(),
+    };
+    setMessages(prev => [...prev, modeMessage]);
+  };
+
+  const resetChat = () => {
+    setAiMode(null);
+    setMessages([
+      {
+        id: '1',
+        text: 'Hello! I\'m your voting assistant. Please select how you\'d like me to help you:\n\n📋 Current Display Info: I\'ll only use information from what you\'re currently viewing\n\n🧠 General Knowledge: I can use my broader knowledge to answer your questions',
+        isUser: false,
+        timestamp: new Date(),
+      },
+    ]);
   };
 
   const toggleChat = () => {
@@ -204,9 +247,14 @@ export default function ChatBot() {
       >
         <View style={[styles.chatHeader, { backgroundColor: chatColors.primary }]}>
           <Text style={styles.chatHeaderText}>Voting Assistant</Text>
-          <TouchableOpacity onPress={toggleChat}>
-            <Ionicons name="close" size={24} color="white" />
-          </TouchableOpacity>
+          <View style={styles.chatHeaderButtons}>
+            <TouchableOpacity onPress={resetChat} style={styles.resetButton}>
+              <Ionicons name="refresh" size={20} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={toggleChat}>
+              <Ionicons name="close" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <ScrollView
@@ -251,6 +299,26 @@ export default function ChatBot() {
           )}
         </ScrollView>
 
+        {/* AI Mode Selection Buttons */}
+        {aiMode === null && (
+          <View style={styles.modeSelectionContainer}>
+            <TouchableOpacity
+              style={[styles.modeButton, { backgroundColor: chatColors.primary }]}
+              onPress={() => selectAIMode('current-display')}
+            >
+              <Ionicons name="document-text" size={20} color="white" />
+              <Text style={styles.modeButtonText}>Current Display Info</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.modeButton, { backgroundColor: chatColors.secondary }]}
+              onPress={() => selectAIMode('general-knowledge')}
+            >
+              <Ionicons name="bulb" size={20} color="white" />
+              <Text style={styles.modeButtonText}>General Knowledge</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={[styles.inputContainer, { borderTopColor: chatColors.border }]}
@@ -260,10 +328,11 @@ export default function ChatBot() {
               backgroundColor: chatColors.surface,
               borderColor: chatColors.border,
               color: chatColors.text,
+              opacity: aiMode === null ? 0.5 : 1,
             }]}
             value={inputText}
             onChangeText={setInputText}
-            placeholder="Type your message..."
+            placeholder={aiMode === null ? "Select a mode first..." : "Type your message..."}
             placeholderTextColor={chatColors.textLight}
             multiline
             maxLength={500}
@@ -273,20 +342,21 @@ export default function ChatBot() {
                 sendMessage();
               }
             }}
+            editable={aiMode !== null}
           />
           <TouchableOpacity
             style={[
               styles.sendButton,
               { backgroundColor: chatColors.primary },
-              (!inputText.trim() || isLoading) && styles.sendButtonDisabled,
+              (!inputText.trim() || isLoading || aiMode === null) && styles.sendButtonDisabled,
             ]}
             onPress={sendMessage}
-            disabled={!inputText.trim() || isLoading}
+            disabled={!inputText.trim() || isLoading || aiMode === null}
           >
             <Ionicons
               name="send"
               size={20}
-              color={!inputText.trim() || isLoading ? chatColors.textLight : 'white'}
+              color={(!inputText.trim() || isLoading || aiMode === null) ? chatColors.textLight : 'white'}
             />
           </TouchableOpacity>
         </KeyboardAvoidingView>
@@ -359,6 +429,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
+  chatHeaderButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  resetButton: {
+    padding: 5,
+  },
   messagesContainer: {
     flex: 1,
     paddingHorizontal: 15,
@@ -423,5 +500,26 @@ const styles = StyleSheet.create({
   },
   sendButtonDisabled: {
     opacity: 0.5,
+  },
+  modeSelectionContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 15,
+    gap: 10,
+  },
+  modeButton: {
+    flex: 1,
+    padding: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  modeButtonText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
   },
 }); 
