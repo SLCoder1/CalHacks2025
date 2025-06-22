@@ -4,6 +4,8 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import governors from '../../data/Governers - Sheet1.json';
+import presidentialCandidates from '../../data/CalHacks Data - P Data (1).json';
+import vicePresidentialCandidates from '../../data/CalHacks Data - VP Data.json';
 import { usePageContext } from '@/components/PageContext';
 
 const PRIMARY_COLOR = '#0a7ea4'; // Used for text and some buttons
@@ -171,7 +173,20 @@ export default function CandidatesTab() {
         value: row.Candidate,
         fullData: row, // Pass all data for detail page
       }));
+  } else if (office === 'president') {
+    candidateOptions = presidentialCandidates.map((row: any) => ({
+      label: row.Name,
+      value: row.Name,
+      fullData: row,
+    }));
+  } else if (office === 'vice-president') {
+    candidateOptions = vicePresidentialCandidates.map((row: any) => ({
+      label: row.Name,
+      value: row.Name,
+      fullData: row,
+    }));
   }
+  
 
   // Show candidate cards if office is selected and (if governor) state is selected
   const showCards =
@@ -193,6 +208,10 @@ export default function CandidatesTab() {
   // Candidate detail view (centered, split by section)
   if (selectedCandidate && selectedCandidate.fullData) {
     const c = selectedCandidate.fullData;
+    const description =
+      c["Description Not Found"] && c["Description Not Found"] !== "Description Not Found"
+        ? c["Description Not Found"]
+        : "No description available.";
 
     // Parse description into sections with titles and content
     function parseDescriptionSections(description: string) {
@@ -267,8 +286,6 @@ export default function CandidatesTab() {
   }
 
   // Comparison view
-  console.log(compareSelection);
-  console.log(compareMode);
   if (compareMode && compareSelection.length === 2) {
     const [cand1, cand2] = compareSelection.map(getCandidateByName);
     return (
@@ -289,12 +306,22 @@ export default function CandidatesTab() {
           </View>
           <View style={styles.comparisonRow}>
             {compareSelection.map((selectedName, idx) => {
-              const cand = candidateOptions.find(c => c.label === selectedName)?.fullData;
-
-              // Parse description for THIS candidate only
+              let cand;
+              if (compareOffice === 'president') {
+                cand = presidentialCandidates.find(c => c.Name === selectedName);
+              } else if (compareOffice === 'vice-president') {
+                cand = vicePresidentialCandidates.find(c => c.Name === selectedName);
+              }
+              // Parse description sections for this candidate
+              let description = "";
+              if (compareOffice === "president") {
+                description = cand?.Description || "";
+              } else if (compareOffice === "vice-president") {
+                description = cand?.["Candidate Description"] || "";
+}
               let descriptionSections: { title?: string; content: string }[] = [];
-              if (cand?.Description && cand.Description.includes('**')) {
-                const parts = cand.Description.split('**');
+              if (description && description.includes('**')) {
+                const parts = description.split('**');
                 if (parts[0].trim()) {
                   descriptionSections.push({ content: parts[0].trim() });
                 }
@@ -307,43 +334,44 @@ export default function CandidatesTab() {
                     descriptionSections.push({ title, content: '' });
                   }
                 }
-              } else if (cand?.Description) {
-                descriptionSections.push({ content: cand.Description.trim() });
+              } else if (description) {
+                descriptionSections.push({ content: description.trim() });
               }
 
               return (
-                <View style={styles.comparisonCol} key={cand?.Candidate || idx}>
-                  <Text style={[styles.detailName, { textAlign: 'center' }]}>{cand?.Candidate}</Text>
-                  {cand?.Description && cand.Description.trim() !== '' ? (
-                    cand.Description.includes('**') && descriptionSections.length > 0 ? (
-                      descriptionSections.map((section, i) => (
-                        <View key={i} style={styles.detailSection}>
-                          {section.title ? (
-                            <Text style={[styles.detailSectionTitle, { fontSize: 15, textAlign: 'left' }]}>{section.title}</Text>
-                          ) : null}
-                          <Text style={[styles.detailSectionText, { textAlign: 'left' }]}>{section.content}</Text>
-                        </View>
-                      ))
+                <ScrollView
+                  style={styles.comparisonCol}
+                  contentContainerStyle={{ flexGrow: 1, alignItems: 'flex-start' }}
+                  key={cand?.Name || idx}
+                  showsVerticalScrollIndicator={true}
+                >
+                  <Text style={[styles.detailName, { textAlign: 'center', alignSelf: 'center', width: '100%' }]}>
+                    {cand?.Name}
+                  </Text>
+                  <View style={styles.detailSection}>
+                    <Text style={styles.detailSectionTitle}>Party</Text>
+                    <Text style={styles.detailSectionText}>{cand?.Party || "Unknown"}</Text>
+                  </View>
+                  <View style={styles.detailSection}>
+                    <Text style={styles.detailSectionTitle}>Description</Text>
+                    {description && description !== "No Description Found" ? (
+                      description.includes('**') && descriptionSections.length > 0 ? (
+                        descriptionSections.map((section, i) => (
+                          <View key={i} style={styles.detailSection}>
+                            {section.title ? (
+                              <Text style={[styles.detailSectionTitle, { fontSize: 15, textAlign: 'left' }]}>{section.title}</Text>
+                            ) : null}
+                            <Text style={[styles.detailSectionText, { textAlign: 'left' }]}>{section.content}</Text>
+                          </View>
+                        ))
+                      ) : (
+                        <Text style={[styles.detailSectionText, { textAlign: 'left' }]}>{description}</Text>
+                      )
                     ) : (
-                      <Text style={[styles.detailSectionText, { textAlign: 'left' }]}>{cand.Description}</Text>
-                    )
-                  ) : (
-                    <Text style={[styles.detailSectionText, { textAlign: 'left' }]}>No description available.</Text>
-                  )}
-                  {cand?.Agenda ? (
-                    <View style={styles.detailSection}>
-                      <Text style={styles.detailSectionTitle}>Agenda</Text>
-                      <Text style={styles.detailSectionText}>{cand.Agenda}</Text>
-                    </View>
-                  ) : null}
-                  {cand?.AgendaDetail ? (
-                    <View style={styles.detailSection}>
-                      <Text style={styles.detailSectionTitle}>Details</Text>
-                      <Text style={styles.detailSectionText}>{cand.AgendaDetail}</Text>
-                    </View>
-                  ) : null}
-                  {/* Add more sections as needed */}
-                </View>
+                      <Text style={[styles.detailSectionText, { textAlign: 'left' }]}>No description available.</Text>
+                    )}
+                  </View>
+                </ScrollView>
               );
             })}
           </View>
@@ -462,6 +490,7 @@ export default function CandidatesTab() {
                 onPress={() => {
                   setCompareMode(true);
                   setCompareSelection([]);
+                  setCompareOffice(office); // Track which office is being compared
                 }}
               >
                 <Ionicons name="git-compare-outline" size={22} color="#fff" />
@@ -507,6 +536,215 @@ export default function CandidatesTab() {
               </Text>
             )}
           </>
+        )}
+
+        {/* Candidate cards for president */}
+        {office === 'president' && (
+          <>
+            <View
+              style={{
+                width: '100%',
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: 8,
+                height: 40,
+                paddingLeft: 16,
+                position: 'relative',
+              }}
+            >
+              <TouchableOpacity
+                style={[styles.arrowButton, { position: 'relative', left: 0, top: 0 }]}
+                onPress={() => setOffice(null)}
+              >
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+              </TouchableOpacity>
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginRight: 40 }}>
+                <Text style={styles.title}>Presidential Candidates</Text>
+              </View>
+              {/* Compare button in top right corner */}
+              <TouchableOpacity
+                style={[styles.arrowButton, { backgroundColor: '#0a7ea4', marginRight: 16 }]}
+                onPress={() => {
+                  setCompareMode(true);
+                  setCompareSelection([]);
+                  setCompareOffice(office); // Track which office is being compared
+                }}
+              >
+                <Ionicons name="git-compare-outline" size={22} color="#fff" />
+              </TouchableOpacity>
+            </View>
+            <ScrollView style={{ width: '100%' }} contentContainerStyle={styles.cardsContainer}>
+              {candidateOptions.map((c) => (
+                <TouchableOpacity
+                  key={c.value}
+                  style={styles.card}
+                  onPress={() => compareMode
+                    ? toggleCompare(c.label)
+                    : setSelectedCandidate(c)
+                  }
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.cardName}>{c.label}</Text>
+                  {/* Show checkmark if in compare mode and selected */}
+                  {compareMode && (
+                    <Ionicons
+                      name={compareSelection.includes(c.label) ? "checkbox" : "square-outline"}
+                      size={22}
+                      color="#0a7ea4"
+                      style={{ position: 'absolute', right: 16, top: 16 }}
+                    />
+                  )}
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            {/* Show compare instructions if in compare mode */}
+            {compareMode && (
+              <Text style={{ color: '#0a7ea4', textAlign: 'center', marginTop: 8 }}>
+                Select two candidates to compare.
+              </Text>
+            )}
+          </>
+        )}
+
+        {/* Candidate cards for vice president */}
+        {office === 'vice-president' && (
+          <>
+            <View
+              style={{
+                width: '100%',
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: 8,
+                height: 40,
+                paddingLeft: 16,
+                position: 'relative',
+              }}
+            >
+              <TouchableOpacity
+                style={[styles.arrowButton, { position: 'relative', left: 0, top: 0 }]}
+                onPress={() => setOffice(null)}
+              >
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+              </TouchableOpacity>
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginRight: 40 }}>
+                <Text style={styles.title}>Vice Presidential Candidates</Text>
+              </View>
+              {/* Compare button in top right corner */}
+              <TouchableOpacity
+                style={[styles.arrowButton, { backgroundColor: '#0a7ea4', marginRight: 16 }]}
+                onPress={() => {
+                  setCompareMode(true);
+                  setCompareSelection([]);
+                  setCompareOffice(office); // Track which office is being compared
+                }}
+              >
+                <Ionicons name="git-compare-outline" size={22} color="#fff" />
+              </TouchableOpacity>
+            </View>
+            <ScrollView style={{ width: '100%' }} contentContainerStyle={styles.cardsContainer}>
+              {candidateOptions.map((c) => (
+                <TouchableOpacity
+                  key={c.value}
+                  style={styles.card}
+                  onPress={() => compareMode
+                    ? toggleCompare(c.label)
+                    : setSelectedCandidate(c)
+                  }
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.cardName}>{c.label}</Text>
+                  {/* Show checkmark if in compare mode and selected */}
+                  {compareMode && (
+                    <Ionicons
+                      name={compareSelection.includes(c.label) ? "checkbox" : "square-outline"}
+                      size={22}
+                      color="#0a7ea4"
+                      style={{ position: 'absolute', right: 16, top: 16 }}
+                    />
+                  )}
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            {/* Show compare instructions if in compare mode */}
+            {compareMode && (
+              <Text style={{ color: '#0a7ea4', textAlign: 'center', marginTop: 8 }}>
+                Select two candidates to compare.
+              </Text>
+            )}
+          </>
+        )}
+
+        {/* Selected candidate detail for president */}
+        {selectedCandidate && office === 'president' && (
+          <KeyboardAvoidingView
+            style={{ flex: 1, backgroundColor: '#f8fbff' }}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          >
+            <View style={styles.container}>
+              <View style={styles.topButtonsRow}>
+                <TouchableOpacity style={styles.arrowButton} onPress={() => setSelectedCandidate(null)}>
+                  <Ionicons name="arrow-back" size={24} color="#fff" />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.detailContainer}>
+                <Text style={styles.detailName}>{selectedCandidate.fullData?.Name}</Text>
+                <View style={styles.detailSection}>
+                  <Text style={styles.detailSectionTitle}>Party</Text>
+                  <Text style={styles.detailSectionText}>{selectedCandidate.fullData?.Party || "Unknown"}</Text>
+                </View>
+                <View style={styles.detailSection}>
+                  <Text style={styles.detailSectionTitle}>Description</Text>
+                  {selectedCandidate.fullData?.Description && selectedCandidate.fullData.Description !== "Description Not Found" ? (
+                    selectedCandidate.fullData.Description.split('\n').map((line: string, idx: number) => (
+                      <Text key={idx} style={[styles.detailSectionText, { textAlign: 'left', marginBottom: 4 }]}>
+                        {line}
+                      </Text>
+                    ))
+                  ) : (
+                    <Text style={[styles.detailSectionText, { textAlign: 'left' }]}>No description available.</Text>
+                  )}
+                </View>
+              </View>
+            </View>
+          </KeyboardAvoidingView>
+        )}
+
+        {/* Selected candidate detail for vice president */}
+        {selectedCandidate && office === 'vice-president' && (
+          <KeyboardAvoidingView
+            style={{ flex: 1, backgroundColor: '#f8fbff' }}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          >
+            <View style={styles.container}>
+              <View style={styles.topButtonsRow}>
+                <TouchableOpacity style={styles.arrowButton} onPress={() => setSelectedCandidate(null)}>
+                  <Ionicons name="arrow-back" size={24} color="#fff" />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.detailContainer}>
+                <Text style={styles.detailName}>{selectedCandidate.fullData?.Name}</Text>
+                <View style={styles.detailSection}>
+                  <Text style={styles.detailSectionTitle}>Party</Text>
+                  <Text style={styles.detailSectionText}>{selectedCandidate.fullData?.Party || "Unknown"}</Text>
+                </View>
+                <View style={styles.detailSection}>
+                  <Text style={styles.detailSectionTitle}>Description</Text>
+                  {selectedCandidate.fullData?.["Candidate Description"] && selectedCandidate.fullData["Candidate Description"] !== "No Description Found" ? (
+                    selectedCandidate.fullData["Candidate Description"].split('\n').map((line: string, idx: number) => (
+                      <Text key={idx} style={[styles.detailSectionText, { textAlign: 'left', marginBottom: 4 }]}>
+                        {line}
+                      </Text>
+                    ))
+                  ) : (
+                    <Text style={[styles.detailSectionText, { textAlign: 'left' }]}>
+                      No description available.
+                    </Text>
+                  )}
+                </View>
+                {/* Add more fields as needed, for example: */}
+              </View>
+            </View>
+          </KeyboardAvoidingView>
         )}
       </View>
     </KeyboardAvoidingView>
