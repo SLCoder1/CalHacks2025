@@ -87,11 +87,11 @@ export default function HomeScreen() {
       });
 
       const data = await response.json();
-      
+
       if (data.error) {
         throw new Error(data.error);
       }
-      
+
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: data.response,
@@ -147,7 +147,7 @@ export default function HomeScreen() {
             <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 18 }}>Candidates</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.button}
             onPress={() => router.push('/propositions')}
           >
