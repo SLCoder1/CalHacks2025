@@ -14,6 +14,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
+import { getApiUrl } from '@/config/api';
 
 const { width, height } = Dimensions.get('window');
 
@@ -103,7 +104,8 @@ export default function ChatBot() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3001/chat', {
+      const API_URL = getApiUrl();
+      const response = await fetch(`${API_URL}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -266,6 +268,11 @@ export default function ChatBot() {
             multiline
             maxLength={500}
             onSubmitEditing={sendMessage}
+            onKeyPress={({ nativeEvent }) => {
+              if (nativeEvent.key === 'Enter') {
+                sendMessage();
+              }
+            }}
           />
           <TouchableOpacity
             style={[
@@ -287,12 +294,13 @@ export default function ChatBot() {
     </>
   );
 }
+const isWeb = Platform.OS === 'web';
 
 const styles = StyleSheet.create({
   floatingButton: {
     position: 'absolute',
-    bottom: 100,
-    right: 20,
+    bottom: 40,
+    right: 40,
     width: 56,
     height: 56,
     borderRadius: 28,
@@ -321,10 +329,10 @@ const styles = StyleSheet.create({
   },
   chatWindow: {
     position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+    bottom: 40,
+    right: 40,
     height: height * 0.7,
+    width: isWeb ? width / 3 : width * 0.9,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     zIndex: 1001,
