@@ -16,14 +16,12 @@ export default function LoginScreen() {
     setLoading(true);
     const { error, data: {session}, } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
-    if(session){
-        router.push('/test');
-    }
+    
     if (error) {
       Alert.alert('Login failed', error.message);
-    } else {
-      // Redirect to home or tabs after successful login
-      router.replace('/test');
+    } else if (session) {
+      // Only redirect to home page if login is successful
+      router.replace('/(tabs)');
     }
   };
 
