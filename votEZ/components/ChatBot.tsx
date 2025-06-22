@@ -10,12 +10,15 @@ import {
   KeyboardAvoidingView,
   Platform,
   Animated,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
 import { getApiUrl } from '@/config/api';
 import { usePageContext } from './PageContext';
+import { chatService, ChatSession, ChatMessage } from '@/lib/chatService';
+import ChatHistory from './ChatHistory';
 
 const { width, height } = Dimensions.get('window');
 
@@ -46,16 +49,13 @@ const chatColors = {
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
   const [aiMode, setAiMode] = useState<AIMode>(null);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: 'Hello! I\'m your voting assistant. Please select how you\'d like me to help you:\n\n📋 Current Display Info: I\'ll only use information from what you\'re currently viewing\n\n🧠 General Knowledge: I can use my broader knowledge to answer your questions',
-      isUser: false,
-      timestamp: new Date(),
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [currentSession, setCurrentSession] = useState<ChatSession | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(0)).current;
@@ -63,6 +63,63 @@ export default function ChatBot() {
   const pageContext = usePageContext();
 
   const colors = Colors[colorScheme ?? 'light'];
+
+  // Check authentication status on mount
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  const checkAuthStatus = async () => {
+    try {
+      const authenticated = await chatService.isAuthenticated();
+      setIsAuthenticated(authenticated);
+      
+      if (authenticated) {
+        await loadCurrentSession();
+      }
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      setIsAuthenticated(false);
+    }
+  };
+
+  const loadCurrentSession = async () => {
+    try {
+      setIsLoadingHistory(true);
+      const session = await chatService.getCurrentSession();
+      
+      if (session) {
+        setCurrentSession(session);
+        setAiMode(session.ai_mode);
+        
+        // Load messages for this session
+        const sessionMessages = await chatService.getSessionMessages(session.id);
+        const formattedMessages: Message[] = sessionMessages.map(msg => ({
+          id: msg.id,
+          text: msg.message_text,
+          isUser: msg.is_user,
+          timestamp: new Date(msg.timestamp),
+        }));
+        
+        setMessages(formattedMessages);
+      } else {
+        // No existing session, show initial message
+        setMessages([
+          {
+            id: '1',
+            text: 'Hello! I\'m your voting assistant. Please select how you\'d like me to help you:\n\n📋 Current Display Info: I\'ll only use information from what you\'re currently viewing\n\n🧠 General Knowledge: I can use my broader knowledge to answer your questions',
+            isUser: false,
+            timestamp: new Date(),
+          },
+        ]);
+      }
+    } catch (error) {
+      console.error('Failed to load session:', error);
+      Alert.alert('Error', 'Failed to load chat history. Please try again.');
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -109,6 +166,18 @@ export default function ChatBot() {
     setIsLoading(true);
 
     try {
+      // Save user message to database if authenticated
+      if (isAuthenticated && currentSession && aiMode) {
+        await chatService.saveMessage({
+          session_id: currentSession.id,
+          message_text: userMessage.text,
+          is_user: true,
+          ai_mode: aiMode,
+          page_content: aiMode === 'current-display' ? pageContext.getPageContentAsText() : undefined,
+          page_metadata: aiMode === 'current-display' ? pageContext.currentPageContent?.metadata : undefined,
+        });
+      }
+
       const API_URL = getApiUrl();
       
       // Prepare request body
@@ -147,6 +216,18 @@ export default function ChatBot() {
       };
 
       setMessages(prev => [...prev, botMessage]);
+
+      // Save bot message to database if authenticated
+      if (isAuthenticated && currentSession && aiMode) {
+        await chatService.saveMessage({
+          session_id: currentSession.id,
+          message_text: botMessage.text,
+          is_user: false,
+          ai_mode: aiMode,
+          page_content: aiMode === 'current-display' ? pageContext.getPageContentAsText() : undefined,
+          page_metadata: aiMode === 'current-display' ? pageContext.currentPageContent?.metadata : undefined,
+        });
+      }
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage: Message = {
@@ -161,21 +242,52 @@ export default function ChatBot() {
     }
   };
 
-  const selectAIMode = (mode: AIMode) => {
+  const selectAIMode = async (mode: AIMode) => {
     setAiMode(mode);
-    const modeMessage: Message = {
-      id: Date.now().toString(),
-      text: mode === 'current-display' 
-        ? '📋 Mode selected: I\'ll focus on information from what you\'re currently viewing. How can I help you with the current content?' 
-        : '🧠 Mode selected: I can use my general knowledge to answer your questions. What would you like to know?',
-      isUser: false,
-      timestamp: new Date(),
-    };
-    setMessages(prev => [...prev, modeMessage]);
+    
+    try {
+      if (isAuthenticated) {
+        // Create new session or update existing one
+        if (!currentSession) {
+          const newSession = await chatService.createSession({
+            ai_mode: mode as 'current-display' | 'general-knowledge',
+            session_name: `Chat - ${mode === 'current-display' ? 'Current Display' : 'General Knowledge'}`,
+          });
+          setCurrentSession(newSession);
+        }
+      }
+      
+      const modeMessage: Message = {
+        id: Date.now().toString(),
+        text: mode === 'current-display' 
+          ? '📋 Mode selected: I\'ll focus on information from what you\'re currently viewing. How can I help you with the current content?' 
+          : '🧠 Mode selected: I can use my general knowledge to answer your questions. What would you like to know?',
+        isUser: false,
+        timestamp: new Date(),
+      };
+      
+      setMessages(prev => [...prev, modeMessage]);
+
+      // Save mode selection message if authenticated
+      if (isAuthenticated && currentSession) {
+        await chatService.saveMessage({
+          session_id: currentSession.id,
+          message_text: modeMessage.text,
+          is_user: false,
+          ai_mode: mode as 'current-display' | 'general-knowledge',
+          page_content: mode === 'current-display' ? pageContext.getPageContentAsText() : undefined,
+          page_metadata: mode === 'current-display' ? pageContext.currentPageContent?.metadata : undefined,
+        });
+      }
+    } catch (error) {
+      console.error('Failed to create session:', error);
+      Alert.alert('Error', 'Failed to save chat session. Please try again.');
+    }
   };
 
-  const resetChat = () => {
+  const resetChat = async () => {
     setAiMode(null);
+    setCurrentSession(null);
     setMessages([
       {
         id: '1',
@@ -184,6 +296,20 @@ export default function ChatBot() {
         timestamp: new Date(),
       },
     ]);
+  };
+
+  const loadSession = (session: ChatSession, sessionMessages: ChatMessage[]) => {
+    setCurrentSession(session);
+    setAiMode(session.ai_mode);
+    
+    const formattedMessages: Message[] = sessionMessages.map(msg => ({
+      id: msg.id,
+      text: msg.message_text,
+      isUser: msg.is_user,
+      timestamp: new Date(msg.timestamp),
+    }));
+    
+    setMessages(formattedMessages);
   };
 
   const toggleChat = () => {
@@ -248,6 +374,11 @@ export default function ChatBot() {
         <View style={[styles.chatHeader, { backgroundColor: chatColors.primary }]}>
           <Text style={styles.chatHeaderText}>Voting Assistant</Text>
           <View style={styles.chatHeaderButtons}>
+            {isAuthenticated && (
+              <TouchableOpacity onPress={() => setShowHistory(true)} style={styles.historyButton}>
+                <Ionicons name="time" size={20} color="white" />
+              </TouchableOpacity>
+            )}
             <TouchableOpacity onPress={resetChat} style={styles.resetButton}>
               <Ionicons name="refresh" size={20} color="white" />
             </TouchableOpacity>
@@ -361,6 +492,13 @@ export default function ChatBot() {
           </TouchableOpacity>
         </KeyboardAvoidingView>
       </Animated.View>
+
+      {/* Chat History Modal */}
+      <ChatHistory
+        isVisible={showHistory}
+        onClose={() => setShowHistory(false)}
+        onLoadSession={loadSession}
+      />
     </>
   );
 }
@@ -432,6 +570,9 @@ const styles = StyleSheet.create({
   chatHeaderButtons: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  historyButton: {
+    padding: 5,
   },
   resetButton: {
     padding: 5,
