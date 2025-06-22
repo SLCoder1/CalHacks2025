@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 // If you have ThemedText and ThemedView, import them. Otherwise, use Text and View.
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+
 import DropDownPicker from 'react-native-dropdown-picker';
 import propositions from '../../data/Propositions 2024 - Sheet1.json';
 import { usePageContext } from '@/components/PageContext';
