@@ -29,9 +29,7 @@ def scrape_candidates(state, position):
                 columns = tr.find_all('td')
                 if len(columns) > 0:
                     candidate_name = columns[2].get_text(strip=True)
-                    results.append({
-                        "candidate": candidate_name,
-                    })
+                    results.append(candidate_name)
             return results
         except Exception as e:
             return {"error": str(e)}
@@ -71,7 +69,7 @@ def scrape_description(candidate_name):
                 "max_tokens": 300,
             }
         )
-        return {"description": response.json()["choices"][0]["message"]["content"]}
+        return response.json()["choices"][0]["message"]["content"]
     except Exception as e:
         return {"error": str(e)}
     
@@ -79,21 +77,30 @@ def scrape_description(candidate_name):
 def candidates():
     try:
         data = request.get_json()
-        if not data or "state" not in data or "position" not in data:
-            return jsonify({"error": "Invalid input"}), 400
-        
-        state = data["state"]
-        position = data["position"]
-        
+        state = data.get("state")
+        position = data.get("position")
+        if not state or not position:
+            return jsonify({"error": "Missing state or position"}), 400
+
+        # Get candidate names
         candidates = scrape_candidates(state, position)
-        scrape_description_results = []
+        if isinstance(candidates, dict) and "error" in candidates:
+            return jsonify({"error": candidates["error"]}), 400
+
+        # Get descriptions for each candidate
+        descriptions = []
         for candidate in candidates:
-            description_result = scrape_description(candidate["candidate"])
-            if "error" in description_result:
-                return jsonify({"error": description_result["error"]}), 500
-            candidate["description"] = description_result["description"]
-            scrape_description_results.append(candidate)
-        return jsonify({"candidates": candidates, "descriptions": scrape_description_results})
+            desc = scrape_description(candidate)
+            # If scrape_description returns a dict with "error", just use the error string
+            if isinstance(desc, dict) and "error" in desc:
+                descriptions.append(desc["error"])
+            else:
+                descriptions.append(desc)
+
+        return jsonify({
+            "candidates": candidates,
+            "descriptions": descriptions
+        })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -174,7 +181,6 @@ def root():
             "health": "/health (GET)"
         }
     })
-
 
 
 if __name__ == "__main__":
