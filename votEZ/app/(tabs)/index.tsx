@@ -58,7 +58,7 @@ Bias Disclaimer: We strive to present information as neutrally as possible. Howe
             <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 18 }}>Candidates</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.button}
             onPress={() => router.push('/propositions')}
           >

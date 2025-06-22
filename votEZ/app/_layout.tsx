@@ -6,7 +6,10 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import ChatBot from '@/components/ChatBot';
+
 import { PageProvider } from '@/components/PageContext';
+
+import { Footer } from '@/components/Footer';
 //import TestScraper from '@/components/TestScraper';
 
 
@@ -31,6 +34,7 @@ export default function RootLayout() {
         <StatusBar style="auto" />
         {/* <TestScraper /> */}
         <ChatBot />
+        <Footer />
       </ThemeProvider>
     </PageProvider>
   );
