@@ -6,7 +6,7 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import ChatBot from '@/components/ChatBot';
-import TestScraper from '@/components/TestScraper';
+//import TestScraper from '@/components/TestScraper';
 
 
 export default function RootLayout() {
@@ -27,7 +27,7 @@ export default function RootLayout() {
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
-      <TestScraper />
+      {/* <TestScraper /> */}
       <ChatBot />
 
     </ThemeProvider>
