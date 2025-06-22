@@ -14,10 +14,10 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     setLoading(true);
-    const { error, data: {session}, } = await supabase.auth.signInWithPassword({ email, password });
+    const { error, data: { session }, } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
-    if(session){
-        router.push('/test');
+    if (session) {
+      router.push('/test');
     }
     if (error) {
       Alert.alert('Login failed', error.message);
@@ -56,7 +56,7 @@ export default function LoginScreen() {
         </TouchableOpacity>
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Don't have an account?</Text>
-          <TouchableOpacity onPress={() => router.push('/signup')}>
+          <TouchableOpacity onPress={() => router.push('/+not-found')}>
             <Text style={styles.signupLink}> Sign up</Text>
           </TouchableOpacity>
         </View>
